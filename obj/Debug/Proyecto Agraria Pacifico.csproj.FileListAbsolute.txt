@@ -11,7 +11,6 @@ C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacif
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Form1.resources
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.FormOlvide_mi_Contraseña.resources
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Inventario.resources
-C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Pantalla_Principal.resources
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Properties.Resources.resources
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Registro_de_Actividad.resources
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Registro_de_una_Venta.resources
@@ -19,3 +18,4 @@ C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto Agraria Pacif
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto Agraria Pacifico.csproj.CoreCompileInputs.cache
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto Agraria Pacifico.exe
 C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto Agraria Pacifico.pdb
+C:\Users\User\Desktop\Proyecto Agraria Pacifico\obj\Debug\Proyecto_Agraria_Pacifico.Pantalla_Principal.resources

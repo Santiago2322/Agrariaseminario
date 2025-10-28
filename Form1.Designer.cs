@@ -61,7 +61,7 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox1.ForeColor = System.Drawing.SystemColors.Window;
+            this.textBox1.ForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.textBox1.Location = new System.Drawing.Point(415, 182);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(115, 20);
@@ -71,7 +71,7 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox2.ForeColor = System.Drawing.SystemColors.Window;
+            this.textBox2.ForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.textBox2.Location = new System.Drawing.Point(415, 240);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(115, 20);
@@ -141,4 +141,3 @@
         private System.Windows.Forms.Button button1;
     }
 }
-

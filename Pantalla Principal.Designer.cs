@@ -22,10 +22,6 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Pantalla_Principal));
@@ -53,6 +49,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.Salir = new System.Windows.Forms.Button();
+            this.btnCerrarSesion = new System.Windows.Forms.Button();
+            this.panelContenedor = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -200,7 +198,7 @@
             this.panel4.Controls.Add(this.label13);
             this.panel4.Controls.Add(this.label14);
             this.panel4.ForeColor = System.Drawing.SystemColors.Control;
-            this.panel4.Location = new System.Drawing.Point(2, 207);
+            this.panel4.Location = new System.Drawing.Point(2, 219);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(233, 123);
             this.panel4.TabIndex = 6;
@@ -256,7 +254,7 @@
             this.panel5.Controls.Add(this.label16);
             this.panel5.Controls.Add(this.label17);
             this.panel5.ForeColor = System.Drawing.SystemColors.Control;
-            this.panel5.Location = new System.Drawing.Point(2, 330);
+            this.panel5.Location = new System.Drawing.Point(2, 345);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(233, 46);
             this.panel5.TabIndex = 7;
@@ -288,7 +286,7 @@
             this.panel6.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panel6.Controls.Add(this.label15);
             this.panel6.ForeColor = System.Drawing.SystemColors.Control;
-            this.panel6.Location = new System.Drawing.Point(2, 374);
+            this.panel6.Location = new System.Drawing.Point(2, 390);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(233, 54);
             this.panel6.TabIndex = 8;
@@ -308,7 +306,7 @@
             // 
             this.label20.AutoSize = true;
             this.label20.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.label20.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.label20.Location = new System.Drawing.Point(255, 9);
             this.label20.Name = "label20";
@@ -318,15 +316,40 @@
             // 
             // Salir
             // 
+            this.Salir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Salir.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.Salir.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Salir.Location = new System.Drawing.Point(760, 425);
             this.Salir.Name = "Salir";
             this.Salir.Size = new System.Drawing.Size(75, 27);
             this.Salir.TabIndex = 17;
-            this.Salir.Text = "Cerrar";
+            this.Salir.Text = "Salir";
             this.Salir.UseVisualStyleBackColor = false;
             this.Salir.Click += new System.EventHandler(this.Salir_Click);
+            // 
+            // btnCerrarSesion
+            // 
+            this.btnCerrarSesion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCerrarSesion.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.btnCerrarSesion.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnCerrarSesion.Location = new System.Drawing.Point(670, 425);
+            this.btnCerrarSesion.Name = "btnCerrarSesion";
+            this.btnCerrarSesion.Size = new System.Drawing.Size(85, 27);
+            this.btnCerrarSesion.TabIndex = 18;
+            this.btnCerrarSesion.Text = "Cerrar sesión";
+            this.btnCerrarSesion.UseVisualStyleBackColor = false;
+            this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
+            // 
+            // panelContenedor
+            // 
+            this.panelContenedor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelContenedor.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panelContenedor.Location = new System.Drawing.Point(236, 0);
+            this.panelContenedor.Name = "panelContenedor";
+            this.panelContenedor.Size = new System.Drawing.Size(610, 420);
+            this.panelContenedor.TabIndex = 9;
             // 
             // Pantalla_Principal
             // 
@@ -336,6 +359,8 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(847, 454);
+            this.Controls.Add(this.panelContenedor);
+            this.Controls.Add(this.btnCerrarSesion);
             this.Controls.Add(this.Salir);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.panel6);
@@ -346,8 +371,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Pantalla_Principal";
-            this.Text = "Pantalla_Principal";
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.Text = "Pantalla Principal";
             this.Load += new System.EventHandler(this.Pantalla_Principal_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -367,6 +391,7 @@
         }
 
         #endregion
+        private System.Windows.Forms.Panel panelContenedor;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label3;
@@ -391,5 +416,7 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Button Salir;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button btnCerrarSesion;
+
     }
 }
