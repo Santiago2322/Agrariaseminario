@@ -94,11 +94,23 @@
     <Compile Include="FormOlvide mi Contraseña.Designer.cs">
       <DependentUpon>FormOlvide mi Contraseña.cs</DependentUpon>
     </Compile>
+    <Compile Include="Home_Admin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Home_Docente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Home_JefeDeArea.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Inventario.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Inventario.Designer.cs">
       <DependentUpon>Inventario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Inventario.Events.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Pantalla Principal.cs">
       <SubType>Form</SubType>

@@ -1,0 +1,63 @@
+-- Ejecutar en SQL Server
+CREATE DATABASE BD_AgrariaPacifico;
+GO
+USE BD_AgrariaPacifico;
+GO
+
+CREATE TABLE Categoria(
+  CategoriaId INT IDENTITY PRIMARY KEY,
+  Nombre NVARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE Producto(
+  ProductoId INT IDENTITY PRIMARY KEY,
+  Nombre NVARCHAR(120) NOT NULL,
+  CategoriaId INT NOT NULL FOREIGN KEY REFERENCES Categoria(CategoriaId),
+  Unidad NVARCHAR(20) NOT NULL,
+  PrecioCompra DECIMAL(18,2) NOT NULL DEFAULT 0,
+  PrecioVenta DECIMAL(18,2) NOT NULL DEFAULT 0,
+  Stock DECIMAL(18,3) NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Venta(
+  VentaId INT IDENTITY PRIMARY KEY,
+  Fecha DATETIME NOT NULL DEFAULT GETDATE(),
+  Cliente NVARCHAR(120) NULL,
+  Total DECIMAL(18,2) NOT NULL
+);
+
+CREATE TABLE VentaDetalle(
+  VentaDetalleId INT IDENTITY PRIMARY KEY,
+  VentaId INT NOT NULL FOREIGN KEY REFERENCES Venta(VentaId) ON DELETE CASCADE,
+  ProductoId INT NOT NULL FOREIGN KEY REFERENCES Producto(ProductoId),
+  Cantidad DECIMAL(18,3) NOT NULL,
+  PrecioUnitario DECIMAL(18,2) NOT NULL,
+  Subtotal AS (ROUND(Cantidad * PrecioUnitario, 2)) PERSISTED
+);
+
+CREATE TABLE Entorno(
+  EntornoId INT IDENTITY PRIMARY KEY,
+  Nombre NVARCHAR(100) NOT NULL,
+  Tipo NVARCHAR(30) NOT NULL,
+  Responsable NVARCHAR(120) NULL,
+  Anio INT NULL, Division NVARCHAR(10) NULL, Grupo NVARCHAR(20) NULL
+);
+
+CREATE TABLE Actividad(
+  ActividadId INT IDENTITY PRIMARY KEY,
+  EntornoId INT NOT NULL FOREIGN KEY REFERENCES Entorno(EntornoId),
+  Fecha DATETIME NOT NULL DEFAULT GETDATE(),
+  Descripcion NVARCHAR(400) NULL
+);
+
+CREATE TABLE Usuarios(
+  UsuarioId INT IDENTITY PRIMARY KEY,
+  Nombre NVARCHAR(60) NOT NULL,
+  Apellido NVARCHAR(60) NOT NULL,
+  Usuario NVARCHAR(60) NOT NULL UNIQUE,
+  Clave NVARCHAR(120) NOT NULL,
+  Perfil NVARCHAR(30) NOT NULL
+);
+
+INSERT INTO Categoria (Nombre) VALUES
+('Mercadería'), ('Animal'), ('Vegetal'), ('Vivero'), ('Huevos'), ('Pollos'), ('Miel'), ('Chanchos'), ('Balanceado'), ('Otros');

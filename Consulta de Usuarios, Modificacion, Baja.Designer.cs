@@ -44,6 +44,12 @@ namespace Proyecto_Agraria_Pacifico
         private Label lblEstado;
         private Label lblArea;
 
+        // === NUEVOS (coinciden con el code-behind) ===
+        private Label lblPreguntaSeg;
+        private ComboBox cboPreguntaSeg;
+        private Label lblRespuestaSeg;
+        private TextBox txtRespuestaSeg;
+
         private Button button2;
         private Button button3;
 
@@ -94,6 +100,12 @@ namespace Proyecto_Agraria_Pacifico
             this.lblEstado = new Label();
             this.lblArea = new Label();
 
+            // === NUEVOS (UI seguridad) ===
+            this.lblPreguntaSeg = new Label();
+            this.cboPreguntaSeg = new ComboBox();
+            this.lblRespuestaSeg = new Label();
+            this.txtRespuestaSeg = new TextBox();
+
             this.button2 = new Button();
             this.button3 = new Button();
 
@@ -103,7 +115,7 @@ namespace Proyecto_Agraria_Pacifico
             // ===== FORM =====
             this.AutoScaleMode = AutoScaleMode.Font;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.ClientSize = new Size(1050, 640);
+            this.ClientSize = new Size(1050, 660);
             this.Text = "Usuarios - Consulta / Modificación / Baja";
 
             // ===== TÍTULO =====
@@ -225,14 +237,35 @@ namespace Proyecto_Agraria_Pacifico
             this.cboArea.Location = new Point(690, 576);
             this.cboArea.Size = new Size(180, 23);
 
+            // ===== SEGURIDAD (debajo de Área/Estado) =====
+            int baseY = 606; // debajo de los combos
+            this.lblPreguntaSeg.AutoSize = true;
+            this.lblPreguntaSeg.Text = "Pregunta de seguridad:";
+            this.lblPreguntaSeg.Location = new Point(560, baseY + 6);
+
+            this.cboPreguntaSeg.DropDownStyle = ComboBoxStyle.DropDownList;
+            this.cboPreguntaSeg.Location = new Point(690, baseY);
+            this.cboPreguntaSeg.Size = new Size(260, 23);
+
+            this.lblRespuestaSeg.AutoSize = true;
+            this.lblRespuestaSeg.Text = "Respuesta:";
+            this.lblRespuestaSeg.Location = new Point(560, baseY + 40 + 6);
+
+            this.txtRespuestaSeg.Location = new Point(690, baseY + 40);
+            this.txtRespuestaSeg.Size = new Size(260, 23);
+
             // ===== BOTONES =====
             this.button2.Text = "Eliminar";
-            this.button2.Location = new Point(690, 610);
+            this.button2.Location = new Point(690, baseY + 80);
             this.button2.Size = new Size(100, 30);
 
             this.button3.Text = "Guardar cambios";
-            this.button3.Location = new Point(800, 610);
+            this.button3.Location = new Point(800, baseY + 80);
             this.button3.Size = new Size(160, 30);
+
+            // Ajusto ClientSize si hace falta más alto
+            if (this.ClientSize.Height < baseY + 120)
+                this.ClientSize = new Size(this.ClientSize.Width, baseY + 120);
 
             // ===== ADD CONTROLS =====
             this.Controls.Add(this.labelTitulo);
@@ -270,6 +303,12 @@ namespace Proyecto_Agraria_Pacifico
             this.Controls.Add(this.cboEstado);
             this.Controls.Add(this.lblArea);
             this.Controls.Add(this.cboArea);
+
+            // nuevos
+            this.Controls.Add(this.lblPreguntaSeg);
+            this.Controls.Add(this.cboPreguntaSeg);
+            this.Controls.Add(this.lblRespuestaSeg);
+            this.Controls.Add(this.txtRespuestaSeg);
 
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button3);

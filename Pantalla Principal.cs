@@ -1,306 +1,328 @@
-﻿using System;
+using System;
 using System.Drawing;
-using System.Linq;
+using System.Drawing.Printing;
 using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
 {
     public partial class Pantalla_Principal : Form
     {
-        private string UsuarioRol { get; set; }
+        // ===== Feature flags =====
+        private const bool FEATURE_REGISTRO_ACTIVIDAD = false; // ← OFF: oculta el botón y no lo cablea
 
-        // Estado menú
-        private bool menuVisible = true;
+        // ===== Estado / impresión =====
+        private Form activeChild;
+        private ToolStrip tool;
+        private ToolStripButton btnPrint, btnCloseTab;
+        private PrintDocument printDoc;
+        private Bitmap printBmp;
 
-        // Botón del menú y encabezado
-        private Button btnToggleMenu;
-        private Panel panelHeader;
+        // Rol actual (actualizable tras login/cierre de sesión)
+        private string rolUsuario;
 
-        // Panel de menú detectado (si lo tuvieras con otro nombre)
-        private Control panelMenuDetectado;
-
-        // Ancho fijo del menú lateral según tu Designer
-        private const int AnchoMenu = 233;
-
-        public Pantalla_Principal(string rol)
+        public Pantalla_Principal(string rol = "usuario")
         {
             InitializeComponent();
-            UsuarioRol = string.IsNullOrWhiteSpace(rol) ? "Invitado" : rol;
 
-            Load += Pantalla_Principal_Load;
-            Resize += Pantalla_Principal_Resize;
+            rolUsuario = NormalizarRol(rol);
 
-            // 1) Encabezado fijo sobre el área de trabajo (no tapa formularios)
-            panelHeader = new Panel
+            SetupToolbar();
+            AplicarPermisosPorRol();
+
+            // Al entrar, mostramos el "home" (banner vacío)
+            try { btnHome.Click += btnHome_Click; btnHome.PerformClick(); } catch { }
+
+            KeyPreview = true;
+            KeyDown += (s, e) =>
             {
-                Name = "panelHeader",
-                Height = 36,
-                BackColor = SystemColors.ControlLight,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+                if (e.Control && e.KeyCode == Keys.P) btnPrint?.PerformClick();
+                if (e.KeyCode == Keys.Escape) btnCloseTab?.PerformClick();
             };
-            Controls.Add(panelHeader);
-            panelHeader.BringToFront();
-
-            // 2) Botón "☰ Menú" dentro del encabezado (no sobre formularios)
-            btnToggleMenu = new Button
-            {
-                Text = "☰ Menú",
-                AutoSize = true,
-                FlatStyle = FlatStyle.Standard,
-                Location = new Point(8, 6)
-            };
-            btnToggleMenu.Click += (s, e) => ToggleMenu();
-            panelHeader.Controls.Add(btnToggleMenu);
-
-            // 3) Detectar panel de menú por nombre común (opcional)
-            panelMenuDetectado = Controls
-                .Cast<Control>()
-                .FirstOrDefault(c =>
-                    c is Panel &&
-                    (string.Equals(c.Name, "panelMenu", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(c.Name, "panelLateral", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(c.Name, "panelOpciones", StringComparison.OrdinalIgnoreCase)));
-
-            // Acomodar encabezado y workspace inicial
-            AlinearEncabezadoYWorkspace();
-
-            // Asegurar que los botones “Cerrar sesión” y “Salir” siempre queden visibles
-            TraerBotonesDeSalidaAlFrente();
         }
 
-        public Pantalla_Principal() : this("Invitado") { }
-
-        private void Pantalla_Principal_Load(object sender, EventArgs e)
+        private static string NormalizarRol(string rol)
         {
-            AplicarRestriccionesPorRol();
-            AlinearEncabezadoYWorkspace();
+            if (string.IsNullOrWhiteSpace(rol)) return "usuario";
+            var r = rol.Trim().ToLowerInvariant();
+            if (r == "admin" || r == "administrador") return "admin";
+            if (r == "jefe de area" || r == "jefe de área") return "jefe de area";
+            if (r == "docente" || r == "profesor") return "docente";
+            if (r == "invitado" || r == "guest") return "invitado";
+            return "usuario";
         }
 
-        private void AplicarRestriccionesPorRol()
+        private void SetPermiso(Button b, bool permitido, string tooltipSiNo)
         {
-            string rolActual = UsuarioRol;
-            DeshabilitarTodo();
+            if (b == null) return;
+            b.Enabled = permitido;
+            b.Tag = permitido ? "allow" : "deny";
+            if (!permitido && !string.IsNullOrEmpty(tooltipSiNo))
+                new ToolTip().SetToolTip(b, tooltipSiNo);
+        }
 
-            switch (rolActual)
+        private bool Denegado(Button b)
+        {
+            if (b == null) return true;
+            if (b.Tag is string tag && tag == "allow") return false;
+            MessageBox.Show("No tenés permiso para usar esta opción.", "Acceso restringido",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return true;
+        }
+
+        private void AplicarPermisosPorRol()
+        {
+            try { lblTitulo.Text = $"Proyecto Agraria — {rolUsuario.ToUpper()}"; } catch { }
+
+            // por defecto (home/cerrar siempre on)
+            SetPermiso(btnHome, true, "");
+            SetPermiso(btnCerrarSesion, true, "");
+
+            // Otras opciones
+            if (FEATURE_REGISTRO_ACTIVIDAD && btnRegActividad != null)
+                SetPermiso(btnRegActividad, false, "Docente o superior.");
+
+            SetPermiso(btnRegVenta, false, "Jefe de área o admin.");
+            SetPermiso(btnConsultaAct, false, "Sin permisos.");
+            SetPermiso(btnConsultaUsuarios, false, "Solo administrador.");
+            SetPermiso(btnConsultaVentas, false, "Sin permisos.");
+            SetPermiso(btnEntornos, false, "Docente o superior.");
+            SetPermiso(btnInventario, false, "Docente o superior.");
+            SetPermiso(btnAltaUsuarios, false, "Solo administrador.");
+            SetPermiso(btnAltaEntornos, false, "Solo administrador.");
+
+            var r = rolUsuario;
+
+            if (r == "admin")
             {
-                case "Administrador":
-                    HabilitarTodo();
-                    break;
-
-                case "Jefe de Área":
-                    label9.Enabled = true; // Alta Entorno
-                    label10.Enabled = true; // Consulta/Modif/Eliminar Entorno
-                    label11.Enabled = true; // Registro Actividad
-                    label12.Enabled = true; // Consulta Actividad
-                    label15.Enabled = true; // Inventario
-                    label16.Enabled = true; // Consulta Ventas
-                    break;
-
-                case "Docente":
-                    label11.Enabled = true; // Registro Actividad
-                    label12.Enabled = true; // Consulta Actividad
-                    label15.Enabled = true; // Inventario
-                    break;
-
-                case "Invitado":
-                    label12.Enabled = true; // Solo consulta de actividad
-                    break;
-
-                default:
-                    MessageBox.Show($"Rol '{rolActual}' no reconocido. Acceso limitado.",
-                        "Permiso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    break;
+                if (FEATURE_REGISTRO_ACTIVIDAD && btnRegActividad != null) SetPermiso(btnRegActividad, true, "");
+                SetPermiso(btnRegVenta, true, "");
+                SetPermiso(btnConsultaAct, true, "");
+                SetPermiso(btnConsultaUsuarios, true, "");
+                SetPermiso(btnConsultaVentas, true, "");
+                SetPermiso(btnEntornos, true, "");
+                SetPermiso(btnInventario, true, "");
+                SetPermiso(btnAltaUsuarios, true, "");
+                SetPermiso(btnAltaEntornos, true, "");
             }
-
-            if (Salir != null) Salir.Enabled = true;
-            if (btnCerrarSesion != null) btnCerrarSesion.Enabled = true;
-        }
-
-        private void HabilitarTodo()
-        {
-            label2.Enabled = true;
-            label3.Enabled = true;
-            label9.Enabled = true;
-            label10.Enabled = true;
-            label11.Enabled = true;
-            label12.Enabled = true;
-            label15.Enabled = true;
-            label16.Enabled = true;
-            label17.Enabled = true;
-        }
-
-        private void DeshabilitarTodo()
-        {
-            label2.Enabled = false;
-            label3.Enabled = false;
-            label9.Enabled = false;
-            label10.Enabled = false;
-            label11.Enabled = false;
-            label12.Enabled = false;
-            label15.Enabled = false;
-            label16.Enabled = false;
-            label17.Enabled = false;
-        }
-
-        // --------------------- Navegación embebida ---------------------
-        private void AbrirFormularioEnPanel<MiForm>() where MiForm : Form, new()
-        {
-            if (panelContenedor.Controls.Count > 0)
-                panelContenedor.Controls.RemoveAt(0);
-
-            var f = new MiForm
+            else if (r == "jefe de area")
             {
-                TopLevel = false,
-                FormBorderStyle = FormBorderStyle.None,
-                Dock = DockStyle.Fill
-            };
-            panelContenedor.Controls.Add(f);
-            panelContenedor.Tag = f;
-            f.Show();
-
-            // Oculto menú (modo foco). El encabezado queda, así el botón no tapa nada.
-            OcultarMenu();
-        }
-
-        // --------------------- Mostrar / Ocultar menú ---------------------
-        private void ToggleMenu()
-        {
-            if (menuVisible) OcultarMenu();
-            else MostrarMenu();
-        }
-
-        private void OcultarMenu()
-        {
-            menuVisible = false;
-            btnToggleMenu.Text = "☰ Menú";
-
-            if (panelMenuDetectado != null)
-                panelMenuDetectado.Visible = false;
-
-            SetVisibilidadLabelsMenu(false);
-
-            // Workspace ocupa todo el ancho
-            panelContenedor.Dock = DockStyle.None;
-            panelContenedor.Left = 0;
-            AlinearEncabezadoYWorkspace();
-
-            TraerBotonesDeSalidaAlFrente();
-        }
-
-        private void MostrarMenu()
-        {
-            menuVisible = true;
-            btnToggleMenu.Text = "← Volver";
-
-            if (panelMenuDetectado != null)
-                panelMenuDetectado.Visible = true;
-
-            SetVisibilidadLabelsMenu(true);
-
-            // Workspace corre a la derecha del menú
-            panelContenedor.Dock = DockStyle.None;
-            panelContenedor.Left = AnchoMenu + 3;
-            AlinearEncabezadoYWorkspace();
-
-            TraerBotonesDeSalidaAlFrente();
-        }
-
-        private void SetVisibilidadLabelsMenu(bool visible)
-        {
-            var labelsMenu = new[]
+                if (FEATURE_REGISTRO_ACTIVIDAD && btnRegActividad != null) SetPermiso(btnRegActividad, true, "");
+                SetPermiso(btnRegVenta, true, "");
+                SetPermiso(btnConsultaAct, true, "");
+                SetPermiso(btnConsultaVentas, true, "");
+                SetPermiso(btnEntornos, true, "");
+                SetPermiso(btnInventario, true, "");
+            }
+            else if (r == "docente")
             {
-                label2, label3, label9, label10, label11, label12, label15, label16, label17
-            };
-            foreach (var lbl in labelsMenu)
-                if (lbl != null) lbl.Visible = visible;
-        }
-
-        // --------------------- Encabezado + Workspace ---------------------
-        private void AlinearEncabezadoYWorkspace()
-        {
-            // Encabezado alineado con el borde izquierdo del área de trabajo
-            panelHeader.Left = panelContenedor.Left;
-            panelHeader.Width = ClientSize.Width - panelHeader.Left - 10;
-            panelHeader.Top = 0;
-
-            // Área de trabajo debajo del encabezado y hasta abajo
-            panelContenedor.Top = panelHeader.Bottom;
-            panelContenedor.Height = ClientSize.Height - panelContenedor.Top - 10;
-
-            // Asegurar z-order
-            panelHeader.BringToFront();
-            btnToggleMenu.BringToFront();
-        }
-
-        private void Pantalla_Principal_Resize(object sender, EventArgs e)
-        {
-            // Mantener layout consistente al redimensionar
-            AlinearEncabezadoYWorkspace();
-            TraerBotonesDeSalidaAlFrente();
-        }
-
-        private void TraerBotonesDeSalidaAlFrente()
-        {
-            if (btnCerrarSesion != null) btnCerrarSesion.BringToFront();
-            if (Salir != null) Salir.BringToFront();
-            panelHeader?.BringToFront();
-            btnToggleMenu?.BringToFront();
-        }
-
-        // --------------------- Clicks del menú ---------------------
-        private void label2_Click(object sender, EventArgs e) { if (!label2.Enabled) return; AbrirFormularioEnPanel<Alta_de_usuarios>(); }
-        private void label3_Click(object sender, EventArgs e) { if (!label3.Enabled) return; AbrirFormularioEnPanel<Consulta_de_Usuarios__Modificacion__Baja>(); }
-        private void label9_Click(object sender, EventArgs e) { if (!label9.Enabled) return; AbrirFormularioEnPanel<Alta_de_Entornos_Formativos>(); }
-        private void label10_Click(object sender, EventArgs e) { if (!label10.Enabled) return; AbrirFormularioEnPanel<Consulta_de_Entornos_Formativos__Modificar_Eliminar>(); }
-        private void label11_Click(object sender, EventArgs e) { if (!label11.Enabled) return; AbrirFormularioEnPanel<Registro_de_Actividad>(); }
-        private void label12_Click(object sender, EventArgs e) { if (!label12.Enabled) return; AbrirFormularioEnPanel<Consulta_de_Actividad>(); }
-        private void label17_Click(object sender, EventArgs e) { if (!label17.Enabled) return; AbrirFormularioEnPanel<Registro_de_una_Venta>(); }
-        private void label16_Click(object sender, EventArgs e) { if (!label16.Enabled) return; AbrirFormularioEnPanel<Consulta_de_Ventas>(); }
-        private void label15_Click(object sender, EventArgs e) { if (!label15.Enabled) return; AbrirFormularioEnPanel<Inventario>(); }
-
-        // --------------------- Salir / Cerrar sesión ---------------------
-        private void Salir_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("¿Seguro que deseas salir de la aplicación?",
-                    "Confirmar salida", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (FEATURE_REGISTRO_ACTIVIDAD && btnRegActividad != null) SetPermiso(btnRegActividad, true, "");
+                SetPermiso(btnConsultaAct, true, "");
+                SetPermiso(btnEntornos, true, "");
+                SetPermiso(btnInventario, true, "");
+            }
+            else // invitado/usuario
             {
-                Application.Exit();
+                SetPermiso(btnConsultaAct, true, "");
             }
         }
 
-        private void btnCerrarSesion_Click(object sender, EventArgs e)
+        // ===== Toolbar / impresión =====
+        private void SetupToolbar()
         {
+            tool = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Dock = DockStyle.Top };
+            btnPrint = new ToolStripButton("Imprimir");
+            btnCloseTab = new ToolStripButton("Cerrar pestaña");
+
+            btnPrint.Click += (s, e) => PrintActiveChild();
+            btnCloseTab.Click += (s, e) => CloseActiveChild();
+
+            tool.Items.Add(btnPrint);
+            tool.Items.Add(new ToolStripSeparator());
+            tool.Items.Add(btnCloseTab);
+            Controls.Add(tool);
+
+            printDoc = new PrintDocument();
+            printDoc.PrintPage += PrintDoc_PrintPage;
+        }
+
+        private void PrintActiveChild()
+        {
+            if (activeChild == null)
+            {
+                MessageBox.Show("No hay contenido para imprimir.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            printBmp = new Bitmap(activeChild.ClientSize.Width, activeChild.ClientSize.Height);
+            activeChild.DrawToBitmap(printBmp, new Rectangle(Point.Empty, activeChild.ClientSize));
+
+            using (var dlg = new PrintDialog())
+            {
+                dlg.Document = printDoc;
+                if (dlg.ShowDialog() == DialogResult.OK)
+                    printDoc.Print();
+            }
+        }
+
+        private void PrintDoc_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            if (printBmp == null) { e.HasMorePages = false; return; }
+            var area = e.MarginBounds;
+            float scale = Math.Min((float)area.Width / printBmp.Width, (float)area.Height / printBmp.Height);
+            int w = (int)(printBmp.Width * scale);
+            int h = (int)(printBmp.Height * scale);
+            e.Graphics.DrawImage(printBmp, area.X, area.Y, w, h);
+            e.HasMorePages = false;
+        }
+
+        // ===== Navegación / carga de child =====
+        private void CloseActiveChild()
+        {
+            if (activeChild != null)
+            {
+                try { activeChild.Close(); } catch { }
+                activeChild = null;
+            }
+
+            panelContenido.Controls.Clear();
+            var banner = new Label
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 20F, FontStyle.Bold),
+                Text = "Seleccione una opción del menú",
+                ForeColor = Color.FromArgb(5, 80, 45)
+            };
+            panelContenido.Controls.Add(banner);
+        }
+
+        private void LoadChild(Form child)
+        {
+            if (activeChild != null)
+            {
+                try { activeChild.Close(); } catch { }
+                activeChild = null;
+            }
+
+            child.TopLevel = false;
+            child.FormBorderStyle = FormBorderStyle.None;
+            child.Dock = DockStyle.Fill;
+
+            panelContenido.SuspendLayout();
+            panelContenido.Controls.Clear();
+            panelContenido.Controls.Add(child);
+            panelContenido.ResumeLayout();
+
+            child.Show();
+            activeChild = child;
+        }
+
+        private void MarkActive(Button btn)
+        {
+            foreach (Control c in panelMenu.Controls)
+                if (c is Button b)
+                {
+                    b.BackColor = Color.FromArgb(17, 105, 59);
+                    b.ForeColor = Color.White;
+                }
+
+            if (btn != null)
+            {
+                btn.BackColor = Color.FromArgb(5, 80, 45);
+                btn.ForeColor = Color.White;
+            }
+        }
+
+        // ===== Handlers =====
+        private void btnHome_Click(object s, EventArgs e) { MarkActive(s as Button); CloseActiveChild(); }
+
+        // Aunque la feature esté apagada, dejamos el handler por si se activa en el futuro
+        private void btnRegActividad_Click(object s, EventArgs e)
+        {
+            if (!FEATURE_REGISTRO_ACTIVIDAD) return;
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Registro_de_Actividad());
+        }
+
+        private void btnRegVenta_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Registro_de_una_Venta());
+        }
+
+        private void btnConsultaAct_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Consulta_de_Actividad());
+        }
+
+        private void btnConsultaUsuarios_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Consulta_de_Usuarios__Modificacion__Baja());
+        }
+
+        private void btnConsultaVentas_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Consulta_de_Ventas());
+        }
+
+        private void btnEntornos_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Consulta_de_Entornos_Formativos__Modificar_Eliminar());
+        }
+
+        private void btnInventario_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Inventario());
+        }
+
+        private void btnAltaUsuarios_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Alta_de_usuarios());
+        }
+
+        private void btnAltaEntornos_Click(object s, EventArgs e)
+        {
+            var b = s as Button; if (Denegado(b)) return;
+            MarkActive(b); LoadChild(new Alta_de_Entornos_Formativos());
+        }
+
+        private void btnCerrarSesion_Click(object s, EventArgs e)
+        {
+            if (MessageBox.Show("¿Seguro que desea cerrar sesión?", "Confirmar",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
             Hide();
-            try
+            using (var login = new Form1())
             {
-                var login = new Form1(); // tu formulario de login
-                login.ShowDialog();
-            }
-            finally
-            {
-                Close();
+                var result = login.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    try
+                    {
+                        var prop = login.GetType().GetProperty("RolSeleccionado");
+                        var valor = prop != null ? prop.GetValue(login) as string : null;
+                        rolUsuario = NormalizarRol(string.IsNullOrWhiteSpace(valor) ? "usuario" : valor);
+                    }
+                    catch { rolUsuario = "usuario"; }
+
+                    Show();
+                    AplicarPermisosPorRol();
+                    MarkActive(null);
+                    CloseActiveChild();
+                    btnHome.PerformClick();
+                }
+                else
+                {
+                    Close();
+                }
             }
         }
-
-        // Stubs que ya tenías
-        private void panel3_Paint(object sender, PaintEventArgs e) { }
-        private void pictureBox6_Click(object sender, EventArgs e) { }
-        private void pictureBox2_Click(object sender, EventArgs e) { AbrirFormularioEnPanel<Registro_de_Actividad>(); }
-        private void pictureBox3_Click(object sender, EventArgs e) { }
-        private void pictureBox4_Click(object sender, EventArgs e) { }
-        private void pictureBox1_Click(object sender, EventArgs e) { }
-        private void pictureBox5_Click(object sender, EventArgs e) { }
-        private void pictureBox7_Click(object sender, EventArgs e) { }
-        private void pictureBox8_Click(object sender, EventArgs e) { }
-        private void pictureBox9_Click(object sender, EventArgs e) { }
-        private void pictureBox10_Click(object sender, EventArgs e) { }
-        private void pictureBox11_Click(object sender, EventArgs e) { }
-        private void pictureBox12_Click(object sender, EventArgs e) { }
-        private void label1_Click(object sender, EventArgs e) { }
-        private void label8_Click(object sender, EventArgs e) { }
-        private void label7_Click(object sender, EventArgs e) { }
-        private void label13_Click(object sender, EventArgs e) { }
-        private void label14_Click(object sender, EventArgs e) { }
-        private void panel4_Paint(object sender, PaintEventArgs e) { }
     }
 }

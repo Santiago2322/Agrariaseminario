@@ -1,143 +1,115 @@
-﻿namespace Proyecto_Agraria_Pacifico
-{
-    partial class Form1
-    {
-        /// <summary>
-        /// Variable del diseñador necesaria.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+﻿using System; // Agregada para consistencia, aunque no es estrictamente necesaria aquí
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
 
-        /// <summary>
-        /// Limpiar los recursos que se estén usando.
-        /// </summary>
-        /// <param name="disposing">true si los recursos administrados se deben desechar; false en caso contrario.</param>
+namespace Proyecto_Agraria_Pacifico
+{
+    // *** CORRECCIÓN CLAVE: Se añade la herencia de : Form ***
+    public partial class Form1 : Form
+    {
+        private IContainer components = null;
+
+        private Panel pnlLeft;
+        private PictureBox pictureBox1;
+        private Panel pnlRight;
+        private Label lblUsuario;
+        private Label lblClave;
+        internal TextBox txtUsuario;
+        internal TextBox txtClave;
+        internal Button btnContinuar;
+        internal LinkLabel lnkOlvide;
+
+        // Se sobreescribe Dispose, ahora válido porque Form1 hereda de Form
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
-        #region Código generado por el Diseñador de Windows Forms
-
-        /// <summary>
-        /// Método necesario para admitir el Diseñador. No se puede modificar
-        /// el contenido de este método con el editor de código.
-        /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.components = new Container();
+
+            this.pnlLeft = new Panel();
+            this.pictureBox1 = new PictureBox();
+            this.pnlRight = new Panel();
+            this.lblUsuario = new Label();
+            this.lblClave = new Label();
+            this.txtUsuario = new TextBox();
+            this.txtClave = new TextBox();
+            this.btnContinuar = new Button();
+            this.lnkOlvide = new LinkLabel();
+
+            // ===== Form =====
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label1.Location = new System.Drawing.Point(359, 182);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(43, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Usuario";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label2.Location = new System.Drawing.Point(348, 243);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Contraseña";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox1.ForeColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.textBox1.Location = new System.Drawing.Point(415, 182);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(115, 20);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox2.ForeColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.textBox2.Location = new System.Drawing.Point(415, 240);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(115, 20);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.linkLabel1.DisabledLinkColor = System.Drawing.Color.Blue;
-            this.linkLabel1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.linkLabel1.LinkColor = System.Drawing.Color.Blue;
-            this.linkLabel1.Location = new System.Drawing.Point(535, 344);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(104, 13);
-            this.linkLabel1.TabIndex = 4;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Olvide la contraseña";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.button1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button1.Location = new System.Drawing.Point(415, 314);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 43);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Continuar";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // Form1
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.ForeColor = System.Drawing.SystemColors.Control;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.AutoScaleDimensions = new SizeF(6F, 13F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.AutoScroll = false;
+            this.ClientSize = new Size(820, 420);
+            this.MinimumSize = new Size(820, 420);
             this.MaximizeBox = false;
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Login";
+            this.BackColor = SystemColors.Control;
+
+            // Left
+            this.pnlLeft.Dock = DockStyle.Left;
+            this.pnlLeft.Width = 330;
+            this.pnlLeft.BackColor = Color.White;
+
+            this.pictureBox1.Dock = DockStyle.Fill;
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            this.pnlLeft.Controls.Add(this.pictureBox1);
+
+            // Right
+            this.pnlRight.Dock = DockStyle.Fill;
+            this.pnlRight.BackColor = Color.FromArgb(224, 224, 224);
+
+            // Usuario
+            this.lblUsuario.AutoSize = true;
+            this.lblUsuario.Location = new Point(60, 80);
+            this.lblUsuario.Text = "Usuario";
+
+            this.txtUsuario.Location = new Point(150, 76);
+            this.txtUsuario.Size = new Size(220, 22);
+            this.txtUsuario.TextChanged += new System.EventHandler(this.txtUsuario_TextChanged);
+
+            // Clave
+            this.lblClave.AutoSize = true;
+            this.lblClave.Location = new Point(60, 130);
+            this.lblClave.Text = "Contraseña";
+
+            this.txtClave.Location = new Point(150, 126);
+            this.txtClave.Size = new Size(220, 22);
+            this.txtClave.UseSystemPasswordChar = true;
+            this.txtClave.TextChanged += new System.EventHandler(this.txtClave_TextChanged);
+
+            // Botón
+            this.btnContinuar.Location = new Point(150, 180);
+            this.btnContinuar.Size = new Size(120, 34);
+            this.btnContinuar.Text = "Continuar";
+            this.btnContinuar.Click += new System.EventHandler(this.btnContinuar_Click);
+
+            // Link
+            this.lnkOlvide.AutoSize = true;
+            this.lnkOlvide.Location = new Point(150, 225);
+            this.lnkOlvide.Text = "Olvidé mi contraseña";
+            this.lnkOlvide.LinkClicked += new LinkLabelLinkClickedEventHandler(this.lnkOlvide_LinkClicked);
+
+            // Ensamble Right
+            this.pnlRight.Controls.Add(this.lblUsuario);
+            this.pnlRight.Controls.Add(this.txtUsuario);
+            this.pnlRight.Controls.Add(this.lblClave);
+            this.pnlRight.Controls.Add(this.txtClave);
+            this.pnlRight.Controls.Add(this.btnContinuar);
+            this.pnlRight.Controls.Add(this.lnkOlvide);
+
+            // Ensamble Form
+            this.Controls.Add(this.pnlRight);
+            this.Controls.Add(this.pnlLeft);
+
             this.ResumeLayout(false);
-            this.PerformLayout();
-
         }
-
-        #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.Button button1;
     }
 }

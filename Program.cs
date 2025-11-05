@@ -1,23 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
 {
     internal static class Program
     {
-        /// <summary>
-        /// Punto de entrada principal para la aplicación.
-        /// </summary>
         [STAThread]
         static void Main()
         {
+            // 🔧 Previene mensajes de depuración molestos (como “NonComVisibleBaseClass”)
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Form1 login = new Form1();
-            Application.Run(login);
+
+            string rol = "usuario";
+
+            // 🧠 Mostrar el formulario de Login primero
+            using (var login = new Form1())
+            {
+                if (login.ShowDialog() != DialogResult.OK)
+                    return;
+
+                rol = login.RolSeleccionado; // viene del SP de la DB
+            }
+
+            // 🚀 Luego abrir la pantalla principal según el rol
+            Application.Run(new Pantalla_Principal(rol));
         }
     }
 }
