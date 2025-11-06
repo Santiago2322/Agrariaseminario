@@ -1,11 +1,14 @@
-﻿namespace Proyecto_Agraria_Pacifico
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace Proyecto_Agraria_Pacifico
 {
     partial class Consulta_de_Ventas
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label labelTitulo;
+        private DataGridView dataGridView1;
+        private Button button1;
+        private Label labelTitulo;
 
         protected override void Dispose(bool disposing)
         {
@@ -15,54 +18,60 @@
 
         private void InitializeComponent()
         {
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.labelTitulo = new System.Windows.Forms.Label();
+            System.Drawing.Font fuenteTitulo = new Font("Segoe UI", 16F, FontStyle.Bold);
+            System.Drawing.Font fuenteNormal = new Font("Segoe UI", 11F);
+            System.Drawing.Font fuenteBtn = new Font("Segoe UI", 11F, FontStyle.Bold);
+
+            this.dataGridView1 = new DataGridView();
+            this.button1 = new Button();
+            this.labelTitulo = new Label();
 
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
 
-            // 
-            // labelTitulo
-            // 
+            // ===== FORM =====
+            this.ClientSize = new Size(880, 520);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.WhiteSmoke;
+            this.Text = "Consulta de Ventas";
+
+            // ===== TÍTULO =====
             this.labelTitulo.AutoSize = true;
-            this.labelTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.labelTitulo.Location = new System.Drawing.Point(20, 15);
+            this.labelTitulo.Font = fuenteTitulo;
+            this.labelTitulo.Location = new Point(25, 20);
             this.labelTitulo.Name = "labelTitulo";
-            this.labelTitulo.Size = new System.Drawing.Size(207, 25);
             this.labelTitulo.Text = "Consulta de Ventas";
 
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView1.Location = new System.Drawing.Point(20, 55);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(640, 300);
+            // ===== GRID =====
+            this.dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.dataGridView1.Location = new Point(25, 70);
+            this.dataGridView1.Size = new Size(820, 360);
+            this.dataGridView1.Font = fuenteNormal;
+            this.dataGridView1.BackgroundColor = Color.White;
+            this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { Font = fuenteBtn };
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
 
-            // 
-            // button1
-            // 
-            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.button1.Location = new System.Drawing.Point(285, 370);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 35);
+            // ===== BOTÓN CERRAR =====
+            this.button1.Anchor = AnchorStyles.Bottom;
+            this.button1.BackColor = Color.FromArgb(5, 80, 45);
+            this.button1.ForeColor = Color.White;
+            this.button1.Font = fuenteBtn;
+            this.button1.FlatStyle = FlatStyle.Flat;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.Location = new Point((this.ClientSize.Width - 150) / 2, 450);
+            this.button1.Size = new Size(150, 40);
             this.button1.Text = "Cerrar";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += (s, e) => this.Close();
 
-            // 
-            // Consulta_de_Ventas
-            // 
-            this.ClientSize = new System.Drawing.Size(680, 420);
+            // ===== ADD CONTROLS =====
             this.Controls.Add(this.labelTitulo);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button1);
-            this.Name = "Consulta_de_Ventas";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Consulta de Ventas";
 
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);

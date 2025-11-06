@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
@@ -7,7 +8,6 @@ namespace Proyecto_Agraria_Pacifico
     {
         private System.ComponentModel.IContainer components = null;
 
-        private Panel panelScroll;   // <- contenedor con AutoScroll
         private Label labelTitulo;
         private Label labelNombre;
         private TextBox textBoxNombre;
@@ -37,12 +37,17 @@ namespace Proyecto_Agraria_Pacifico
         private ComboBox comboBoxEstado;
         private Label labelArea;
         private ComboBox comboBoxArea;
+        private Button buttonGuardar;
+        private Button buttonCancelar;
+
+        // Seguridad
         private Label labelPreguntaSeg;
         private ComboBox comboBoxPreguntaSeg;
         private Label labelRespuestaSeg;
         private TextBox textBoxRespuestaSeg;
-        private Button buttonGuardar;
-        private Button buttonCancelar;
+
+        // Contenedor scroll
+        private Panel panelScroll;
 
         protected override void Dispose(bool disposing)
         {
@@ -55,116 +60,94 @@ namespace Proyecto_Agraria_Pacifico
         {
             components = new System.ComponentModel.Container();
 
-            // ========== Form ==========
-            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(880, 620);
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Alta de Usuarios";
-            MinimizeBox = true; MaximizeBox = true;
+            // Form
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.Font = new Font("Segoe UI", 11F); // fuente más grande
+            this.ClientSize = new System.Drawing.Size(980, 720);
+            this.Name = "Alta_de_usuarios";
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Alta de Usuarios";
 
-            // ========== Panel con scroll ==========
+            // Panel con scroll
             panelScroll = new Panel
             {
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
                 BackColor = Color.White
             };
-            Controls.Add(panelScroll);
+            this.Controls.Add(panelScroll);
 
-            // ========== Controles ==========
+            // Título
             labelTitulo = new Label
             {
                 AutoSize = true,
-                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 18F, FontStyle.Bold),
                 Location = new Point(24, 18),
                 Text = "Alta de Usuarios"
             };
             panelScroll.Controls.Add(labelTitulo);
 
-            int x1 = 28, x2 = 180, y = 60, sepY = 34, w = 260, h = 20;
+            int x1 = 28, x2 = 220, y = 80, sepY = 36, w = 320, h = 28;
 
-            labelNombre = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Nombre:" };
-            textBoxNombre = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            // Izquierda
+            labelNombre = L("Nombre:", x1, y); panelScroll.Controls.Add(labelNombre);
+            textBoxNombre = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxNombre); y += sepY;
 
-            labelApellido = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Apellido:" };
-            textBoxApellido = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelApellido = L("Apellido:", x1, y); panelScroll.Controls.Add(labelApellido);
+            textBoxApellido = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxApellido); y += sepY;
 
-            labelDNI = new Label { AutoSize = true, Location = new Point(x1, y), Text = "DNI:" };
-            textBoxDNI = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelDNI = L("DNI:", x1, y); panelScroll.Controls.Add(labelDNI);
+            textBoxDNI = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxDNI); y += sepY;
 
-            labelEmail = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Email:" };
-            textBoxEmail = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelEmail = L("Email:", x1, y); panelScroll.Controls.Add(labelEmail);
+            textBoxEmail = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxEmail); y += sepY;
 
-            labelTelefono = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Teléfono:" };
-            textBoxTelefono = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelTelefono = L("Teléfono:", x1, y); panelScroll.Controls.Add(labelTelefono);
+            textBoxTelefono = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxTelefono); y += sepY;
 
-            labelUsuario = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Usuario:" };
-            textBoxUsuario = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelUsuario = L("Usuario:", x1, y); panelScroll.Controls.Add(labelUsuario);
+            textBoxUsuario = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxUsuario); y += sepY;
 
-            labelContrasenia = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Contraseña:" };
-            textBoxContrasenia = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h), UseSystemPasswordChar = true }; y += sepY;
+            labelContrasenia = L("Contraseña:", x1, y); panelScroll.Controls.Add(labelContrasenia);
+            textBoxContrasenia = T(x2, y - 4, w, h); textBoxContrasenia.UseSystemPasswordChar = true; panelScroll.Controls.Add(textBoxContrasenia); y += sepY;
 
-            labelDireccion = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Dirección:" };
-            textBoxDireccion = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelDireccion = L("Dirección:", x1, y); panelScroll.Controls.Add(labelDireccion);
+            textBoxDireccion = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxDireccion); y += sepY;
 
-            labelLocalidad = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Localidad:" };
-            textBoxLocalidad = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelLocalidad = L("Localidad:", x1, y); panelScroll.Controls.Add(labelLocalidad);
+            textBoxLocalidad = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxLocalidad); y += sepY;
 
-            labelProvincia = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Provincia:" };
-            textBoxProvincia = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, h) }; y += sepY;
+            labelProvincia = L("Provincia:", x1, y); panelScroll.Controls.Add(labelProvincia);
+            textBoxProvincia = T(x2, y - 4, w, h); panelScroll.Controls.Add(textBoxProvincia); y += sepY;
 
-            labelObservaciones = new Label { AutoSize = true, Location = new Point(x1, y), Text = "Observaciones:" };
-            textBoxObservaciones = new TextBox { Location = new Point(x2, y - 3), Size = new Size(w, 60), Multiline = true };
+            labelObservaciones = L("Observaciones:", x1, y); panelScroll.Controls.Add(labelObservaciones);
+            textBoxObservaciones = new TextBox { Location = new Point(x2, y - 4), Width = w, Height = 80, Multiline = true, BorderStyle = BorderStyle.FixedSingle };
+            panelScroll.Controls.Add(textBoxObservaciones);
 
-            // Agrego a panel
-            panelScroll.Controls.AddRange(new Control[]
-            {
-                labelNombre, textBoxNombre,
-                labelApellido, textBoxApellido,
-                labelDNI, textBoxDNI,
-                labelEmail, textBoxEmail,
-                labelTelefono, textBoxTelefono,
-                labelUsuario, textBoxUsuario,
-                labelContrasenia, textBoxContrasenia,
-                labelDireccion, textBoxDireccion,
-                labelLocalidad, textBoxLocalidad,
-                labelProvincia, textBoxProvincia,
-                labelObservaciones, textBoxObservaciones
-            });
+            // Derecha
+            int x3 = 560, y2 = 80, w2 = 300;
 
-            // Columna derecha
-            int x3 = 480, y2 = 60, w2 = w - 60;
+            labelRol = L("Rol:", x3, y2); panelScroll.Controls.Add(labelRol);
+            comboBoxRol = C(x3 + 160, y2 - 4, w2); panelScroll.Controls.Add(comboBoxRol); y2 += sepY;
 
-            labelRol = new Label { AutoSize = true, Location = new Point(x3, y2), Text = "Rol:" };
-            comboBoxRol = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(x3 + 140, y2 - 3), Size = new Size(w2, h) }; y2 += sepY;
+            labelEstado = L("Estado:", x3, y2); panelScroll.Controls.Add(labelEstado);
+            comboBoxEstado = C(x3 + 160, y2 - 4, w2); panelScroll.Controls.Add(comboBoxEstado); y2 += sepY;
 
-            labelEstado = new Label { AutoSize = true, Location = new Point(x3, y2), Text = "Estado:" };
-            comboBoxEstado = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(x3 + 140, y2 - 3), Size = new Size(w2, h) }; y2 += sepY;
+            labelArea = L("Área:", x3, y2); panelScroll.Controls.Add(labelArea);
+            comboBoxArea = C(x3 + 160, y2 - 4, w2); panelScroll.Controls.Add(comboBoxArea); y2 += sepY;
 
-            labelArea = new Label { AutoSize = true, Location = new Point(x3, y2), Text = "Área:" };
-            comboBoxArea = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(x3 + 140, y2 - 3), Size = new Size(w2, h) }; y2 += sepY;
+            labelPreguntaSeg = L("Pregunta de seguridad:", x3, y2); panelScroll.Controls.Add(labelPreguntaSeg);
+            comboBoxPreguntaSeg = C(x3 + 160, y2 - 4, w2); panelScroll.Controls.Add(comboBoxPreguntaSeg); y2 += sepY;
 
-            labelPreguntaSeg = new Label { AutoSize = true, Location = new Point(x3, y2), Text = "Pregunta de seguridad:" };
-            comboBoxPreguntaSeg = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(x3 + 140, y2 - 3), Size = new Size(w2, h) }; y2 += sepY;
+            labelRespuestaSeg = L("Respuesta:", x3, y2); panelScroll.Controls.Add(labelRespuestaSeg);
+            textBoxRespuestaSeg = T(x3 + 160, y2 - 4, w2, h); panelScroll.Controls.Add(textBoxRespuestaSeg); y2 += sepY;
 
-            labelRespuestaSeg = new Label { AutoSize = true, Location = new Point(x3, y2), Text = "Respuesta de seguridad:" };
-            textBoxRespuestaSeg = new TextBox { Location = new Point(x3 + 140, y2 - 3), Size = new Size(w2, h) }; y2 += sepY;
-
-            panelScroll.Controls.AddRange(new Control[]
-            {
-                labelRol, comboBoxRol,
-                labelEstado, comboBoxEstado,
-                labelArea, comboBoxArea,
-                labelPreguntaSeg, comboBoxPreguntaSeg,
-                labelRespuestaSeg, textBoxRespuestaSeg
-            });
-
-            // Botones (abajo a la derecha)
+            // Botones
             buttonGuardar = new Button
             {
                 Location = new Point(x3, 460),
-                Size = new Size(110, 32),
+                Size = new Size(130, 36),
                 Text = "Guardar",
                 BackColor = Color.FromArgb(17, 105, 59),
                 ForeColor = Color.White,
@@ -174,10 +157,10 @@ namespace Proyecto_Agraria_Pacifico
 
             buttonCancelar = new Button
             {
-                Location = new Point(x3 + 120, 460),
-                Size = new Size(110, 32),
+                Location = new Point(x3 + 150, 460),
+                Size = new Size(130, 36),
                 Text = "Cancelar",
-                BackColor = Color.FromArgb(120, 120, 120),
+                BackColor = Color.FromArgb(5, 80, 45),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
             };
@@ -186,13 +169,15 @@ namespace Proyecto_Agraria_Pacifico
             panelScroll.Controls.Add(buttonGuardar);
             panelScroll.Controls.Add(buttonCancelar);
 
-            // Asegura espacio de scroll al final
-            var spacer = new Panel { Location = new Point(0, 520), Size = new Size(10, 10) };
-            panelScroll.Controls.Add(spacer);
+            // helpers locales
+            Label L(string txt, int x, int yPos) =>
+                new Label { AutoSize = true, Text = txt, Location = new Point(x, yPos) };
 
-            // Wiring de eventos del Designer -> al code-behind
-            textBoxDNI.KeyPress += new KeyPressEventHandler(this.soloNumeros_KeyPress);
-            textBoxTelefono.KeyPress += new KeyPressEventHandler(this.tel_KeyPress);
+            TextBox T(int x, int yPos, int wdt, int hgt) =>
+                new TextBox { Location = new Point(x, yPos), Width = wdt, Height = hgt, BorderStyle = BorderStyle.FixedSingle };
+
+            ComboBox C(int x, int yPos, int wdt) =>
+                new ComboBox { Location = new Point(x, yPos), Width = wdt, DropDownStyle = ComboBoxStyle.DropDownList };
         }
     }
 }

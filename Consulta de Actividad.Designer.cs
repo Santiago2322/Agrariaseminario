@@ -15,6 +15,12 @@
 
         private void InitializeComponent()
         {
+            // Fuentes “grandes y legibles”
+            System.Drawing.Font fuenteTitulo = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            System.Drawing.Font fuenteLabel = new System.Drawing.Font("Segoe UI", 11F);
+            System.Drawing.Font fuenteCtrl = new System.Drawing.Font("Segoe UI", 11F);
+            System.Drawing.Font fuenteBtn = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.textBoxFiltro = new System.Windows.Forms.TextBox();
             this.buttonBuscar = new System.Windows.Forms.Button();
@@ -28,124 +34,122 @@
             this.buttonModificar = new System.Windows.Forms.Button();
             this.buttonEliminar = new System.Windows.Forms.Button();
             this.buttonCerrar = new System.Windows.Forms.Button();
-
-            // NUEVOS:
-            this.buttonNuevo = new System.Windows.Forms.Button();
-            this.buttonGuardar = new System.Windows.Forms.Button();
+            this.buttonNuevo = new System.Windows.Forms.Button(); // NUEVO
+            this.buttonGuardar = new System.Windows.Forms.Button(); // NUEVO
 
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // dataGridView1
-            // 
+
+            // ===== FORM =====
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Consulta de Actividad";
+            this.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.ClientSize = new System.Drawing.Size(780, 540);   // más grande
+
+            // ===== BUSCAR =====
+            this.label1.Location = new System.Drawing.Point(20, 18);
+            this.label1.Size = new System.Drawing.Size(70, 28);
+            this.label1.Text = "Buscar:";
+            this.label1.Font = fuenteLabel;
+
+            this.textBoxFiltro.Location = new System.Drawing.Point(95, 16);
+            this.textBoxFiltro.Size = new System.Drawing.Size(380, 28);
+            this.textBoxFiltro.Font = fuenteCtrl;
+
+            this.buttonBuscar.Location = new System.Drawing.Point(485, 14);
+            this.buttonBuscar.Size = new System.Drawing.Size(110, 32);
+            this.buttonBuscar.Text = "Buscar";
+            this.buttonBuscar.Font = fuenteBtn;
+            this.buttonBuscar.UseVisualStyleBackColor = true;
+            this.buttonBuscar.Click += new System.EventHandler(this.buttonBuscar_Click);
+
+            // ===== GRID =====
             this.dataGridView1.Location = new System.Drawing.Point(20, 60);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(600, 200);
+            this.dataGridView1.Size = new System.Drawing.Size(736, 250); // un poco más alto/ancho
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.Font = fuenteCtrl;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle { Font = fuenteBtn };
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
-            // 
-            // textBoxFiltro
-            // 
-            this.textBoxFiltro.Location = new System.Drawing.Point(80, 20);
-            this.textBoxFiltro.Name = "textBoxFiltro";
-            this.textBoxFiltro.Size = new System.Drawing.Size(300, 20);
-            this.textBoxFiltro.TabIndex = 1;
-            // 
-            // buttonBuscar
-            // 
-            this.buttonBuscar.Location = new System.Drawing.Point(400, 18);
-            this.buttonBuscar.Name = "buttonBuscar";
-            this.buttonBuscar.Size = new System.Drawing.Size(80, 25);
-            this.buttonBuscar.TabIndex = 2;
-            this.buttonBuscar.Text = "Buscar";
-            this.buttonBuscar.UseVisualStyleBackColor = true;
-            this.buttonBuscar.Click += new System.EventHandler(this.buttonBuscar_Click);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(20, 20);
-            this.label1.Size = new System.Drawing.Size(60, 20);
-            this.label1.Text = "Buscar:";
-            // 
-            // textBoxNombre
-            // 
-            this.textBoxNombre.Location = new System.Drawing.Point(120, 280);
-            this.textBoxNombre.Size = new System.Drawing.Size(250, 20);
-            // 
-            // textBoxDescripcion
-            // 
-            this.textBoxDescripcion.Location = new System.Drawing.Point(120, 310);
-            this.textBoxDescripcion.Size = new System.Drawing.Size(250, 20);
-            // 
-            // textBoxResponsable
-            // 
-            this.textBoxResponsable.Location = new System.Drawing.Point(120, 340);
-            this.textBoxResponsable.Size = new System.Drawing.Size(250, 20);
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(20, 283);
-            this.label2.Size = new System.Drawing.Size(80, 20);
+
+            // ===== CAMPOS (más grandes) =====
+            int xLbl = 20, xTxt = 140, sepY = 38;
+            int yBase = 330;
+
+            // Nombre
+            this.label2.Location = new System.Drawing.Point(xLbl, yBase);
+            this.label2.Size = new System.Drawing.Size(110, 28);
             this.label2.Text = "Nombre:";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(20, 313);
-            this.label3.Size = new System.Drawing.Size(80, 20);
+            this.label2.Font = fuenteLabel;
+
+            this.textBoxNombre.Location = new System.Drawing.Point(xTxt, yBase - 2);
+            this.textBoxNombre.Size = new System.Drawing.Size(320, 28);
+            this.textBoxNombre.Font = fuenteCtrl;
+
+            // Descripción
+            this.label3.Location = new System.Drawing.Point(xLbl, yBase + sepY);
+            this.label3.Size = new System.Drawing.Size(110, 28);
             this.label3.Text = "Descripción:";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(20, 343);
-            this.label4.Size = new System.Drawing.Size(80, 20);
+            this.label3.Font = fuenteLabel;
+
+            this.textBoxDescripcion.Location = new System.Drawing.Point(xTxt, yBase + sepY - 2);
+            this.textBoxDescripcion.Size = new System.Drawing.Size(320, 28);
+            this.textBoxDescripcion.Font = fuenteCtrl;
+
+            // Responsable
+            this.label4.Location = new System.Drawing.Point(xLbl, yBase + 2 * sepY);
+            this.label4.Size = new System.Drawing.Size(110, 28);
             this.label4.Text = "Responsable:";
-            // 
-            // buttonModificar
-            // 
-            this.buttonModificar.Location = new System.Drawing.Point(400, 280);
-            this.buttonModificar.Size = new System.Drawing.Size(100, 30);
+            this.label4.Font = fuenteLabel;
+
+            this.textBoxResponsable.Location = new System.Drawing.Point(xTxt, yBase + 2 * sepY - 2);
+            this.textBoxResponsable.Size = new System.Drawing.Size(320, 28);
+            this.textBoxResponsable.Font = fuenteCtrl;
+
+            // ===== BOTONES (más grandes) =====
+            // Columna izquierda (Modificar/Eliminar/Cerrar)
+            this.buttonModificar.Location = new System.Drawing.Point(485, yBase - 2);
+            this.buttonModificar.Size = new System.Drawing.Size(120, 34);
             this.buttonModificar.Text = "Modificar";
+            this.buttonModificar.Font = fuenteBtn;
             this.buttonModificar.UseVisualStyleBackColor = true;
             this.buttonModificar.Click += new System.EventHandler(this.buttonModificar_Click);
-            // 
-            // buttonEliminar
-            // 
-            this.buttonEliminar.Location = new System.Drawing.Point(400, 320);
-            this.buttonEliminar.Size = new System.Drawing.Size(100, 30);
+
+            this.buttonEliminar.Location = new System.Drawing.Point(485, yBase + sepY - 2);
+            this.buttonEliminar.Size = new System.Drawing.Size(120, 34);
             this.buttonEliminar.Text = "Eliminar";
+            this.buttonEliminar.Font = fuenteBtn;
             this.buttonEliminar.UseVisualStyleBackColor = true;
             this.buttonEliminar.Click += new System.EventHandler(this.buttonEliminar_Click);
-            // 
-            // buttonCerrar
-            // 
-            this.buttonCerrar.Location = new System.Drawing.Point(400, 400);
-            this.buttonCerrar.Size = new System.Drawing.Size(100, 30);
+
+            this.buttonCerrar.Location = new System.Drawing.Point(485, yBase + 2 * sepY - 2);
+            this.buttonCerrar.Size = new System.Drawing.Size(120, 34);
             this.buttonCerrar.Text = "Cerrar";
+            this.buttonCerrar.Font = fuenteBtn;
             this.buttonCerrar.UseVisualStyleBackColor = true;
             this.buttonCerrar.Click += new System.EventHandler(this.buttonCerrar_Click);
-            // 
-            // buttonNuevo (NUEVO)
-            // 
-            this.buttonNuevo.Location = new System.Drawing.Point(520, 280);
-            this.buttonNuevo.Size = new System.Drawing.Size(100, 30);
+
+            // Columna derecha (Nuevo/Guardar)
+            this.buttonNuevo.Location = new System.Drawing.Point(625, yBase - 2);
+            this.buttonNuevo.Size = new System.Drawing.Size(130, 34);
             this.buttonNuevo.Text = "Nuevo";
+            this.buttonNuevo.Font = fuenteBtn;
             this.buttonNuevo.UseVisualStyleBackColor = true;
             this.buttonNuevo.Click += new System.EventHandler(this.buttonNuevo_Click);
-            // 
-            // buttonGuardar (NUEVO)
-            // 
-            this.buttonGuardar.Location = new System.Drawing.Point(520, 320);
-            this.buttonGuardar.Size = new System.Drawing.Size(100, 30);
+
+            this.buttonGuardar.Location = new System.Drawing.Point(625, yBase + sepY - 2);
+            this.buttonGuardar.Size = new System.Drawing.Size(130, 34);
             this.buttonGuardar.Text = "Guardar";
+            this.buttonGuardar.Font = fuenteBtn;
             this.buttonGuardar.UseVisualStyleBackColor = true;
             this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
-            // 
-            // Consulta_de_Actividad (Form)
-            // 
-            this.ClientSize = new System.Drawing.Size(650, 450);
+
+            // ===== ADD CONTROLS =====
             this.Controls.Add(this.buttonGuardar);
             this.Controls.Add(this.buttonNuevo);
             this.Controls.Add(this.buttonCerrar);
@@ -161,8 +165,7 @@
             this.Controls.Add(this.buttonBuscar);
             this.Controls.Add(this.textBoxFiltro);
             this.Controls.Add(this.dataGridView1);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Consulta de Actividad";
+
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

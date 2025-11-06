@@ -42,14 +42,26 @@ namespace Proyecto_Agraria_Pacifico
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White
+                BackgroundColor = Color.White,
+                Font = new Font("Segoe UI", 11F, FontStyle.Regular), // 🔸 Texto más grande
+                ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                    BackColor = Color.FromArgb(5, 80, 45),
+                    ForeColor = Color.White
+                },
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Font = new Font("Segoe UI", 10.5F, FontStyle.Regular),
+                    ForeColor = Color.Black
+                }
             };
 
             // Botones
             var panelBotones = new FlowLayoutPanel
             {
                 Dock = DockStyle.Bottom,
-                Height = 60,
+                Height = 70, // 🔸 Un poco más alto para que se vean mejor
                 FlowDirection = FlowDirection.RightToLeft,
                 Padding = new Padding(10),
                 BackColor = Color.White
@@ -58,11 +70,12 @@ namespace Proyecto_Agraria_Pacifico
             btnCerrar = new Button
             {
                 Text = "Cerrar",
-                Width = 120,
-                Height = 36,
+                Width = 140,
+                Height = 45,
                 BackColor = Color.FromArgb(5, 80, 45),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold) // 🔸 Aumentado
             };
             btnCerrar.FlatAppearance.BorderSize = 0;
             btnCerrar.Click += buttonCerrar_Click;
@@ -70,11 +83,12 @@ namespace Proyecto_Agraria_Pacifico
             btnEliminar = new Button
             {
                 Text = "Eliminar",
-                Width = 120,
-                Height = 36,
+                Width = 140,
+                Height = 45,
                 BackColor = Color.FromArgb(200, 50, 50),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold) // 🔸 Aumentado
             };
             btnEliminar.FlatAppearance.BorderSize = 0;
             btnEliminar.Click += btnEliminar_Click;
@@ -82,11 +96,12 @@ namespace Proyecto_Agraria_Pacifico
             btnModificar = new Button
             {
                 Text = "Modificar",
-                Width = 120,
-                Height = 36,
+                Width = 140,
+                Height = 45,
                 BackColor = Color.FromArgb(17, 105, 59),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold) // 🔸 Aumentado
             };
             btnModificar.FlatAppearance.BorderSize = 0;
             btnModificar.Click += btnModificar_Click;
@@ -94,11 +109,12 @@ namespace Proyecto_Agraria_Pacifico
             btnAgregar = new Button
             {
                 Text = "Agregar",
-                Width = 120,
-                Height = 36,
+                Width = 140,
+                Height = 45,
                 BackColor = Color.FromArgb(17, 105, 59),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold) // 🔸 Aumentado
             };
             btnAgregar.FlatAppearance.BorderSize = 0;
             btnAgregar.Click += btnAgregar_Click;
@@ -110,4 +126,3 @@ namespace Proyecto_Agraria_Pacifico
         }
     }
 }
-

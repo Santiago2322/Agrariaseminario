@@ -1,11 +1,11 @@
-﻿using System; // Agregada para consistencia, aunque no es estrictamente necesaria aquí
+﻿using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
 {
-    // *** CORRECCIÓN CLAVE: Se añade la herencia de : Form ***
+    // Designer – fuentes más grandes
     public partial class Form1 : Form
     {
         private IContainer components = null;
@@ -20,7 +20,6 @@ namespace Proyecto_Agraria_Pacifico
         internal Button btnContinuar;
         internal LinkLabel lnkOlvide;
 
-        // Se sobreescribe Dispose, ahora válido porque Form1 hereda de Form
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null)) components.Dispose();
@@ -43,57 +42,72 @@ namespace Proyecto_Agraria_Pacifico
 
             // ===== Form =====
             this.SuspendLayout();
-            this.AutoScaleDimensions = new SizeF(6F, 13F);
+            this.AutoScaleDimensions = new SizeF(7F, 15F);
             this.AutoScaleMode = AutoScaleMode.Font;
             this.AutoScroll = false;
-            this.ClientSize = new Size(820, 420);
-            this.MinimumSize = new Size(820, 420);
+            this.ClientSize = new Size(900, 480);
+            this.MinimumSize = new Size(900, 480);
             this.MaximizeBox = false;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Login";
             this.BackColor = SystemColors.Control;
+            this.Font = new Font("Segoe UI", 9F);
+            // fuente base
 
-            // Left
+            // ===== Left =====
             this.pnlLeft.Dock = DockStyle.Left;
-            this.pnlLeft.Width = 330;
+            this.pnlLeft.Width = 360;
             this.pnlLeft.BackColor = Color.White;
 
             this.pictureBox1.Dock = DockStyle.Fill;
             this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             this.pnlLeft.Controls.Add(this.pictureBox1);
 
-            // Right
+            // ===== Right =====
             this.pnlRight.Dock = DockStyle.Fill;
-            this.pnlRight.BackColor = Color.FromArgb(224, 224, 224);
+            this.pnlRight.BackColor = Color.FromArgb(240, 240, 240);
 
-            // Usuario
+            // ===== Labels (14.25 pt) =====
+            var labelFont = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+
             this.lblUsuario.AutoSize = true;
-            this.lblUsuario.Location = new Point(60, 80);
+            this.lblUsuario.Font = labelFont;
+            this.lblUsuario.Location = new Point(60, 90);
             this.lblUsuario.Text = "Usuario";
 
-            this.txtUsuario.Location = new Point(150, 76);
-            this.txtUsuario.Size = new Size(220, 22);
-            this.txtUsuario.TextChanged += new System.EventHandler(this.txtUsuario_TextChanged);
-
-            // Clave
             this.lblClave.AutoSize = true;
-            this.lblClave.Location = new Point(60, 130);
+            this.lblClave.Font = labelFont;
+            this.lblClave.Location = new Point(60, 160);
             this.lblClave.Text = "Contraseña";
 
-            this.txtClave.Location = new Point(150, 126);
-            this.txtClave.Size = new Size(220, 22);
+            // ===== TextBox (12 pt) =====
+            var inputFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+
+            this.txtUsuario.Font = inputFont;
+            this.txtUsuario.Location = new Point(60, 125);
+            this.txtUsuario.Size = new Size(320, 29);
+            this.txtUsuario.TextChanged += new EventHandler(this.txtUsuario_TextChanged);
+
+            this.txtClave.Font = inputFont;
+            this.txtClave.Location = new Point(60, 195);
+            this.txtClave.Size = new Size(320, 29);
             this.txtClave.UseSystemPasswordChar = true;
-            this.txtClave.TextChanged += new System.EventHandler(this.txtClave_TextChanged);
+            this.txtClave.TextChanged += new EventHandler(this.txtClave_TextChanged);
 
-            // Botón
-            this.btnContinuar.Location = new Point(150, 180);
-            this.btnContinuar.Size = new Size(120, 34);
+            // ===== Botón (12 pt Bold) =====
+            var btnFont = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            this.btnContinuar.Font = btnFont;
+            this.btnContinuar.Location = new Point(60, 250);
+            this.btnContinuar.Size = new Size(160, 40);
             this.btnContinuar.Text = "Continuar";
-            this.btnContinuar.Click += new System.EventHandler(this.btnContinuar_Click);
+            this.btnContinuar.UseVisualStyleBackColor = true;
+            this.btnContinuar.Click += new EventHandler(this.btnContinuar_Click);
 
-            // Link
+            // ===== Link (10.5 pt) =====
+            var linkFont = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
             this.lnkOlvide.AutoSize = true;
-            this.lnkOlvide.Location = new Point(150, 225);
+            this.lnkOlvide.Font = linkFont;
+            this.lnkOlvide.Location = new Point(60, 305);
             this.lnkOlvide.Text = "Olvidé mi contraseña";
             this.lnkOlvide.LinkClicked += new LinkLabelLinkClickedEventHandler(this.lnkOlvide_LinkClicked);
 

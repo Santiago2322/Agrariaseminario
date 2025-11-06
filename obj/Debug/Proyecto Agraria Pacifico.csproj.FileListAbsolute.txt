@@ -61,3 +61,4 @@ C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto 
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.csproj.CoreCompileInputs.cache
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.exe
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.pdb
+C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.exe.config

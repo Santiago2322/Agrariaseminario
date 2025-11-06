@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
 {
-    public partial class Pantalla_Principal
+    public partial class Pantalla_Principal : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -12,11 +12,9 @@ namespace Proyecto_Agraria_Pacifico
         internal Label lblTitulo;
         private Panel panelMenu;
         internal Panel panelContenido;
-
         internal Panel panelStage;
 
         private Button btnHome;
-        private Button btnRegActividad;   // ← se crea, pero puede quedar oculto y sin handler
         private Button btnRegVenta;
         private Button btnConsultaAct;
         private Button btnConsultaUsuarios;
@@ -26,10 +24,13 @@ namespace Proyecto_Agraria_Pacifico
         private Button btnAltaUsuarios;
         private Button btnAltaEntornos;
         private Button btnCerrarSesion;
+        // 🔸 Registro de actividad deshabilitado por diseño
+        private Button btnRegActividad;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null)) components.Dispose();
+            if (disposing && (components != null))
+                components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -82,15 +83,6 @@ namespace Proyecto_Agraria_Pacifico
 
             // ===== Botones =====
             this.btnHome = CrearBoton("Inicio", new EventHandler(this.btnHome_Click));
-
-            // Registro de Actividad (cableado condicional por feature flag)
-            if (FEATURE_REGISTRO_ACTIVIDAD)
-                this.btnRegActividad = CrearBoton("Registro de Actividad", new EventHandler(this.btnRegActividad_Click));
-            else
-                this.btnRegActividad = CrearBoton("Registro de Actividad", null);
-            this.btnRegActividad.Visible = FEATURE_REGISTRO_ACTIVIDAD;
-            this.btnRegActividad.Enabled = FEATURE_REGISTRO_ACTIVIDAD;
-
             this.btnRegVenta = CrearBoton("Registro de Ventas", new EventHandler(this.btnRegVenta_Click));
             this.btnConsultaAct = CrearBoton("Consulta de Actividad", new EventHandler(this.btnConsultaAct_Click));
             this.btnConsultaUsuarios = CrearBoton("Usuarios (ABM)", new EventHandler(this.btnConsultaUsuarios_Click));
@@ -101,10 +93,13 @@ namespace Proyecto_Agraria_Pacifico
             this.btnAltaEntornos = CrearBoton("Alta de Entornos", new EventHandler(this.btnAltaEntornos_Click));
             this.btnCerrarSesion = CrearBoton("Cerrar Sesión", new EventHandler(this.btnCerrarSesion_Click));
 
-            // Agregar a la barra lateral SIN dejar huecos
-            int top = 8;
-            var botones = new System.Collections.Generic.List<Button>
-            {
+            // Registro de Actividad (creado pero oculto)
+            this.btnRegActividad = CrearBoton("Registro de Actividad", null);
+            this.btnRegActividad.Visible = false;
+            this.btnRegActividad.Enabled = false;
+
+            // Lista final de botones (sin huecos)
+            Button[] botones = {
                 this.btnHome,
                 this.btnRegVenta,
                 this.btnConsultaAct,
@@ -117,9 +112,7 @@ namespace Proyecto_Agraria_Pacifico
                 this.btnCerrarSesion
             };
 
-            if (FEATURE_REGISTRO_ACTIVIDAD)
-                botones.Insert(1, this.btnRegActividad); // justo debajo de "Inicio"
-
+            int top = 8;
             foreach (var b in botones)
             {
                 b.Left = 8;
@@ -130,7 +123,7 @@ namespace Proyecto_Agraria_Pacifico
                 top += 50;
             }
 
-            // Form
+            // Form principal
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = AutoScaleMode.Font;
             this.Text = "Pantalla Principal";

@@ -7,7 +7,6 @@ namespace Proyecto_Agraria_Pacifico
 {
     public partial class Consulta_de_Entornos_Formativos__Modificar_Eliminar : Form
     {
-        // 🔗 Misma cadena del proyecto
         private const string CADENA =
             @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
@@ -15,14 +14,19 @@ namespace Proyecto_Agraria_Pacifico
         {
             InitializeComponent();
             this.AutoScroll = true;
+            this.Load += Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load;
 
-            // Asegurate en el Designer:
-            //  this.Load                        -> Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load
-            //  dataGridView1.CellClick         -> dataGridView1_CellClick
-            //  button1 (Modificar)             -> button1_Click
-            //  button2 (Eliminar)              -> button2_Click
-            //  button3 (Guardar/Agregar nuevo) -> button3_Click
-            //  label3.Click (o botón Cerrar)    -> label3_Click (cierra)
+            // wire de eventos de runtime (el Designer también los setea; cualquiera de los dos está bien)
+            dataGridView1.CellClick += dataGridView1_CellClick;
+            button1.Click += button1_Click; // Modificar
+            button2.Click += button2_Click; // Eliminar
+            button3.Click += button3_Click; // Guardar/Agregar
+        }
+
+        // === Helpers compatibles C# 7.3 ===
+        private static object NV(string s)
+        {
+            return string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : (object)s.Trim();
         }
 
         private void Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load(object sender, EventArgs e)
@@ -31,14 +35,15 @@ namespace Proyecto_Agraria_Pacifico
             {
                 EnsureTabla();
                 CargarDatos();
-                if (dataGridView1 != null)
-                {
-                    dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    dataGridView1.MultiSelect = false;
-                    dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    if (dataGridView1.Columns["Id"] != null)
-                        dataGridView1.Columns["Id"].Visible = false;
-                }
+
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridView1.MultiSelect = false;
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridView1.AllowUserToAddRows = false;
+                dataGridView1.ReadOnly = true;
+
+                if (dataGridView1.Columns["Id"] != null)
+                    dataGridView1.Columns["Id"].Visible = false;
             }
             catch (Exception ex)
             {
@@ -47,9 +52,6 @@ namespace Proyecto_Agraria_Pacifico
             }
         }
 
-        /// <summary>
-        /// Crea dbo.EntornosFormativos si no existe. No crea la BD.
-        /// </summary>
         private void EnsureTabla()
         {
             const string SQL = @"
@@ -57,13 +59,14 @@ IF OBJECT_ID('dbo.EntornosFormativos','U') IS NULL
 BEGIN
     CREATE TABLE dbo.EntornosFormativos
     (
-        Id        INT IDENTITY(1,1) PRIMARY KEY,
-        Nombre    NVARCHAR(120) NOT NULL,
-        Tipo      NVARCHAR(80)  NOT NULL,
-        Profesor  NVARCHAR(120) NOT NULL,
-        Anio      NVARCHAR(20)  NOT NULL,
-        Division  NVARCHAR(20)  NOT NULL,
-        Grupo     NVARCHAR(40)  NOT NULL
+        Id             INT IDENTITY(1,1) PRIMARY KEY,
+        Nombre         NVARCHAR(120) NOT NULL,
+        Tipo           NVARCHAR(80)  NOT NULL,
+        Profesor       NVARCHAR(120) NULL,
+        Anio           NVARCHAR(20)  NULL,
+        Division       NVARCHAR(20)  NULL,
+        Grupo          NVARCHAR(40)  NULL,
+        Observaciones  NVARCHAR(300) NULL
     );
 END";
             using (var cn = new SqlConnection(CADENA))
@@ -78,11 +81,12 @@ END";
         {
             using (var cn = new SqlConnection(CADENA))
             {
-                string sql = @"SELECT Id, Nombre, Tipo, Profesor, Anio, Division, Grupo
-                               FROM dbo.EntornosFormativos";
+                string sql = @"
+SELECT Id, Nombre, Tipo, Profesor, Anio, Division, Grupo
+FROM dbo.EntornosFormativos";
                 if (!string.IsNullOrWhiteSpace(filtro))
                     sql += " WHERE Nombre LIKE @f OR Tipo LIKE @f OR Profesor LIKE @f OR Anio LIKE @f OR Division LIKE @f OR Grupo LIKE @f";
-                sql += " ORDER BY Nombre";
+                sql += " ORDER BY Nombre;";
 
                 using (var da = new SqlDataAdapter(sql, cn))
                 {
@@ -101,13 +105,12 @@ END";
             if (e.RowIndex < 0 || dataGridView1.CurrentRow == null) return;
 
             var fila = dataGridView1.Rows[e.RowIndex];
-
-            textBox1.Text = fila.Cells["Nombre"]?.Value?.ToString();
-            textBox2.Text = fila.Cells["Tipo"]?.Value?.ToString();
-            textBox3.Text = fila.Cells["Profesor"]?.Value?.ToString();
-            textBox4.Text = fila.Cells["Anio"]?.Value?.ToString();
-            textBox6.Text = fila.Cells["Division"]?.Value?.ToString();
-            textBox5.Text = fila.Cells["Grupo"]?.Value?.ToString();
+            textBox1.Text = (fila.Cells["Nombre"] == null || fila.Cells["Nombre"].Value == null) ? "" : fila.Cells["Nombre"].Value.ToString();
+            textBox2.Text = (fila.Cells["Tipo"] == null || fila.Cells["Tipo"].Value == null) ? "" : fila.Cells["Tipo"].Value.ToString();
+            textBox3.Text = (fila.Cells["Profesor"] == null || fila.Cells["Profesor"].Value == null) ? "" : fila.Cells["Profesor"].Value.ToString();
+            textBox4.Text = (fila.Cells["Anio"] == null || fila.Cells["Anio"].Value == null) ? "" : fila.Cells["Anio"].Value.ToString();
+            textBox6.Text = (fila.Cells["Division"] == null || fila.Cells["Division"].Value == null) ? "" : fila.Cells["Division"].Value.ToString();
+            textBox5.Text = (fila.Cells["Grupo"] == null || fila.Cells["Grupo"].Value == null) ? "" : fila.Cells["Grupo"].Value.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e) // Modificar
@@ -117,7 +120,6 @@ END";
                 MessageBox.Show("Seleccioná un registro.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (!ValidarCampos()) return;
 
             int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
@@ -132,10 +134,10 @@ WHERE Id=@id;";
             {
                 cmd.Parameters.AddWithValue("@n", textBox1.Text.Trim());
                 cmd.Parameters.AddWithValue("@t", textBox2.Text.Trim());
-                cmd.Parameters.AddWithValue("@p", textBox3.Text.Trim());
-                cmd.Parameters.AddWithValue("@a", textBox4.Text.Trim());
-                cmd.Parameters.AddWithValue("@d", textBox6.Text.Trim());
-                cmd.Parameters.AddWithValue("@g", textBox5.Text.Trim());
+                cmd.Parameters.Add("@p", SqlDbType.NVarChar, 120).Value = NV(textBox3.Text);
+                cmd.Parameters.Add("@a", SqlDbType.NVarChar, 20).Value = NV(textBox4.Text);
+                cmd.Parameters.Add("@d", SqlDbType.NVarChar, 20).Value = NV(textBox6.Text);
+                cmd.Parameters.Add("@g", SqlDbType.NVarChar, 40).Value = NV(textBox5.Text);
                 cmd.Parameters.AddWithValue("@id", id);
 
                 cn.Open();
@@ -143,8 +145,8 @@ WHERE Id=@id;";
             }
 
             CargarDatos();
-            MessageBox.Show("Registro modificado correctamente.",
-                "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Registro modificado correctamente.", "Confirmación",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void button2_Click(object sender, EventArgs e) // Eliminar
@@ -156,10 +158,8 @@ WHERE Id=@id;";
             }
 
             int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
-
             if (MessageBox.Show("¿Eliminar este entorno?", "Confirmar",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                return;
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
             using (var cn = new SqlConnection(CADENA))
             using (var cmd = new SqlCommand("DELETE FROM dbo.EntornosFormativos WHERE Id=@id;", cn))
@@ -170,11 +170,11 @@ WHERE Id=@id;";
             }
 
             CargarDatos();
-            MessageBox.Show("Registro eliminado correctamente.",
-                "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Registro eliminado correctamente.", "Confirmación",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void button3_Click(object sender, EventArgs e) // Agregar (Guardar nuevo)
+        private void button3_Click(object sender, EventArgs e) // Agregar
         {
             if (!ValidarCampos()) return;
 
@@ -187,18 +187,18 @@ VALUES (@n, @t, @p, @a, @d, @g);";
             {
                 cmd.Parameters.AddWithValue("@n", textBox1.Text.Trim());
                 cmd.Parameters.AddWithValue("@t", textBox2.Text.Trim());
-                cmd.Parameters.AddWithValue("@p", textBox3.Text.Trim());
-                cmd.Parameters.AddWithValue("@a", textBox4.Text.Trim());
-                cmd.Parameters.AddWithValue("@d", textBox6.Text.Trim());
-                cmd.Parameters.AddWithValue("@g", textBox5.Text.Trim());
+                cmd.Parameters.Add("@p", SqlDbType.NVarChar, 120).Value = NV(textBox3.Text);
+                cmd.Parameters.Add("@a", SqlDbType.NVarChar, 20).Value = NV(textBox4.Text);
+                cmd.Parameters.Add("@d", SqlDbType.NVarChar, 20).Value = NV(textBox6.Text);
+                cmd.Parameters.Add("@g", SqlDbType.NVarChar, 40).Value = NV(textBox5.Text);
 
                 cn.Open();
                 cmd.ExecuteNonQuery();
             }
 
             CargarDatos();
-            MessageBox.Show("Nuevo entorno agregado.",
-                "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Nuevo entorno agregado.", "Confirmación",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool ValidarCampos()
@@ -217,43 +217,10 @@ VALUES (@n, @t, @p, @a, @d, @g);";
                 textBox2.Focus();
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(textBox3.Text))
-            {
-                MessageBox.Show("El campo Profesor es obligatorio.", "Validación",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBox3.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(textBox4.Text))
-            {
-                MessageBox.Show("El campo Año es obligatorio.", "Validación",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBox4.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(textBox6.Text))
-            {
-                MessageBox.Show("El campo División es obligatorio.", "Validación",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBox6.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(textBox5.Text))
-            {
-                MessageBox.Show("El campo Grupo es obligatorio.", "Validación",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBox5.Focus();
-                return false;
-            }
             return true;
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
-            // Si tu label3 es “Cerrar”, dejamos que cierre la ventana:
-            this.Close();
-        }
-
+        private void label3_Click(object sender, EventArgs e) { this.Close(); }
         private void textBox4_TextChanged(object sender, EventArgs e) { }
     }
 }

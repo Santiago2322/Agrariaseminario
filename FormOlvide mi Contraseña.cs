@@ -17,6 +17,8 @@ namespace Proyecto_Agraria_Pacifico
 
             txtUsuario.Leave += txtUsuario_Leave;
             btnRestablecer.Click += btnRestablecer_Click;
+
+            // Ya cerraba por lambda, lo dejo y además agrego el método requerido por el designer.
             btnCancelar.Click += (s, e) => this.Close();
         }
 
@@ -158,6 +160,12 @@ IF COL_LENGTH('dbo.Usuarios','RespuestaSeguridad') IS NULL
             {
                 MessageBox.Show("No se pudo actualizar la contraseña.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // ✅ Agregado para satisfacer la referencia del Designer
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
