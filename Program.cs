@@ -8,25 +8,25 @@ namespace Proyecto_Agraria_Pacifico
         [STAThread]
         static void Main()
         {
-            // 🔧 Previene mensajes de depuración molestos (como “NonComVisibleBaseClass”)
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            string rol = "usuario";
-
-            // 🧠 Mostrar el formulario de Login primero
+            // Mostrar el login
             using (var login = new Form1())
             {
-                if (login.ShowDialog() != DialogResult.OK)
+                var dr = login.ShowDialog();
+
+                // Si cancela o falla el login → salir
+                if (dr != DialogResult.OK || !login.AuthSucceeded)
                     return;
 
-                rol = login.RolSeleccionado; // viene del SP de la DB
-            }
+                // Mostrar mensaje de bienvenida
+                MessageBox.Show("Acceso concedido. Rol: " + login.RolSeleccionado,
+                                "Bienvenido", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            // 🚀 Luego abrir la pantalla principal según el rol
-            Application.Run(new Pantalla_Principal(rol));
+                // Abrir Pantalla_Principal, pasando el rol
+                Application.Run(new Pantalla_Principal(login.RolSeleccionado));
+            }
         }
     }
 }

@@ -5,8 +5,7 @@ using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
 {
-    // Designer – fuentes más grandes
-    public partial class Form1 : Form
+    partial class Form1
     {
         private IContainer components = null;
 
@@ -44,7 +43,6 @@ namespace Proyecto_Agraria_Pacifico
             this.SuspendLayout();
             this.AutoScaleDimensions = new SizeF(7F, 15F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.AutoScroll = false;
             this.ClientSize = new Size(900, 480);
             this.MinimumSize = new Size(900, 480);
             this.MaximizeBox = false;
@@ -52,7 +50,6 @@ namespace Proyecto_Agraria_Pacifico
             this.Text = "Login";
             this.BackColor = SystemColors.Control;
             this.Font = new Font("Segoe UI", 9F);
-            // fuente base
 
             // ===== Left =====
             this.pnlLeft.Dock = DockStyle.Left;
@@ -67,9 +64,7 @@ namespace Proyecto_Agraria_Pacifico
             this.pnlRight.Dock = DockStyle.Fill;
             this.pnlRight.BackColor = Color.FromArgb(240, 240, 240);
 
-            // ===== Labels (14.25 pt) =====
             var labelFont = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-
             this.lblUsuario.AutoSize = true;
             this.lblUsuario.Font = labelFont;
             this.lblUsuario.Location = new Point(60, 90);
@@ -80,38 +75,29 @@ namespace Proyecto_Agraria_Pacifico
             this.lblClave.Location = new Point(60, 160);
             this.lblClave.Text = "Contraseña";
 
-            // ===== TextBox (12 pt) =====
             var inputFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-
             this.txtUsuario.Font = inputFont;
             this.txtUsuario.Location = new Point(60, 125);
             this.txtUsuario.Size = new Size(320, 29);
-            this.txtUsuario.TextChanged += new EventHandler(this.txtUsuario_TextChanged);
 
             this.txtClave.Font = inputFont;
             this.txtClave.Location = new Point(60, 195);
             this.txtClave.Size = new Size(320, 29);
             this.txtClave.UseSystemPasswordChar = true;
-            this.txtClave.TextChanged += new EventHandler(this.txtClave_TextChanged);
 
-            // ===== Botón (12 pt Bold) =====
             var btnFont = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
             this.btnContinuar.Font = btnFont;
             this.btnContinuar.Location = new Point(60, 250);
             this.btnContinuar.Size = new Size(160, 40);
             this.btnContinuar.Text = "Continuar";
             this.btnContinuar.UseVisualStyleBackColor = true;
-            this.btnContinuar.Click += new EventHandler(this.btnContinuar_Click);
 
-            // ===== Link (10.5 pt) =====
             var linkFont = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point);
             this.lnkOlvide.AutoSize = true;
             this.lnkOlvide.Font = linkFont;
             this.lnkOlvide.Location = new Point(60, 305);
             this.lnkOlvide.Text = "Olvidé mi contraseña";
-            this.lnkOlvide.LinkClicked += new LinkLabelLinkClickedEventHandler(this.lnkOlvide_LinkClicked);
 
-            // Ensamble Right
             this.pnlRight.Controls.Add(this.lblUsuario);
             this.pnlRight.Controls.Add(this.txtUsuario);
             this.pnlRight.Controls.Add(this.lblClave);
@@ -119,7 +105,6 @@ namespace Proyecto_Agraria_Pacifico
             this.pnlRight.Controls.Add(this.btnContinuar);
             this.pnlRight.Controls.Add(this.lnkOlvide);
 
-            // Ensamble Form
             this.Controls.Add(this.pnlRight);
             this.Controls.Add(this.pnlLeft);
 

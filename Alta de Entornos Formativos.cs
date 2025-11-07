@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Proyecto_Agraria_Pacifico
@@ -9,6 +10,18 @@ namespace Proyecto_Agraria_Pacifico
     {
         private const string CADENA =
             @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+
+        // ---- Límites de longitudes (suaves) ----
+        private const int MAX_NOMBRE = 120;
+        private const int MAX_TIPO = 80;
+        private const int MAX_PROFESOR = 120;
+        private const int MAX_ANIO = 20;
+        private const int MAX_DIVISION = 20;
+        private const int MAX_GRUPO = 40;
+        private const int MAX_OBS = 300;
+
+        // ErrorProvider para marcar campos
+        private readonly ErrorProvider ep = new ErrorProvider { BlinkStyle = ErrorBlinkStyle.NeverBlink };
 
         public Alta_de_Entornos_Formativos()
         {
@@ -24,6 +37,7 @@ namespace Proyecto_Agraria_Pacifico
 
         private void Alta_de_Entornos_Formativos_Load(object sender, EventArgs e)
         {
+            // Sugerencias de "Tipo"
             comboBox1.Items.Clear();
             comboBox1.Items.Add("Industria – Dulces y Conservas");
             comboBox1.Items.Add("Industria – Lácteos");
@@ -40,12 +54,48 @@ namespace Proyecto_Agraria_Pacifico
             comboBox1.Items.Add("Animal – Ponedora");
             if (comboBox1.Items.Count > 0) comboBox1.SelectedIndex = 0;
 
+            // MaxLength (si los TextBox vienen del diseñador con nombres textBox1..6)
+            SafeSetMaxLength(textBox1, MAX_NOMBRE);     // Nombre
+            SafeSetMaxLength(textBox2, MAX_PROFESOR);   // Profesor
+            SafeSetMaxLength(textBox4, MAX_ANIO);       // Año
+            SafeSetMaxLength(textBox3, MAX_DIVISION);   // División
+            SafeSetMaxLength(textBox5, MAX_GRUPO);      // Grupo
+            SafeSetMaxLength(textBox6, MAX_OBS);        // Observaciones
+
+            // Validación reactiva simple (limpia errores al escribir/cambiar)
+            WireReactiveValidation();
+
             try { EnsureTablaEntornos(); }
             catch (Exception ex)
             {
                 MessageBox.Show("Error preparando esquema: " + ex.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SafeSetMaxLength(TextBox tb, int max)
+        {
+            if (tb != null) tb.MaxLength = max;
+        }
+
+        private void WireReactiveValidation()
+        {
+            void onChange(object s, EventArgs e) => ValidarFormulario(false);
+
+            if (textBox1 != null) textBox1.TextChanged += onChange; // Nombre
+            if (comboBox1 != null) comboBox1.SelectedIndexChanged += onChange; // Tipo
+            if (textBox2 != null) textBox2.TextChanged += onChange; // Profesor
+            if (textBox4 != null) textBox4.TextChanged += onChange; // Año
+            if (textBox3 != null) textBox3.TextChanged += onChange; // División
+            if (textBox5 != null) textBox5.TextChanged += onChange; // Grupo
+            if (textBox6 != null) textBox6.TextChanged += onChange; // Observaciones
+
+            // Opcional: restringir "Año" a dígitos y guiones (ej: "2025", "3ro", etc. lo dejo libre por si usás "3°")
+            // Si querés solo dígitos, descomentá:
+            // if (textBox4 != null) textBox4.KeyPress += (s, e) =>
+            // {
+            //     if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
+            // };
         }
 
         private void EnsureTablaEntornos()
@@ -73,14 +123,58 @@ END";
             }
         }
 
+        // =============== VALIDACIÓN CENTRAL =================
+        // Devuelve true si todo OK. Si showMessages = true, muestra aviso y enfoca el primer error.
+        private bool ValidarFormulario(bool showMessages)
+        {
+            // limpiar errores previos
+            ep.SetError(textBox1, "");
+            ep.SetError(comboBox1, "");
+            ep.SetError(textBox2, "");
+            ep.SetError(textBox4, "");
+            ep.SetError(textBox3, "");
+            ep.SetError(textBox5, "");
+            ep.SetError(textBox6, "");
+
+            Control primerError = null;
+            void Err(Control c, string msg)
+            {
+                ep.SetError(c, msg);
+                if (primerError == null) primerError = c;
+            }
+
+            // Requeridos (no vacíos ni solo espacios)
+            if (IsBlank(textBox1)) Err(textBox1, "Requerido.");                       // Nombre
+            if (comboBox1 == null || string.IsNullOrWhiteSpace(comboBox1.Text))       // Tipo
+                Err(comboBox1, "Requerido.");
+            if (IsBlank(textBox2)) Err(textBox2, "Requerido.");                       // Profesor
+            if (IsBlank(textBox4)) Err(textBox4, "Requerido.");                       // Año
+            if (IsBlank(textBox3)) Err(textBox3, "Requerido.");                       // División
+            if (IsBlank(textBox5)) Err(textBox5, "Requerido.");                       // Grupo
+            if (IsBlank(textBox6)) Err(textBox6, "Requerido.");                       // Observaciones
+
+            bool ok = (primerError == null);
+
+            if (!ok && showMessages)
+            {
+                MessageBox.Show("Revisá los campos marcados.", "Validación",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                try { primerError?.Focus(); } catch { /* ignore */ }
+            }
+
+            return ok;
+        }
+
+        private bool IsBlank(TextBox tb)
+        {
+            return tb == null || string.IsNullOrWhiteSpace(tb.Text);
+        }
+
+        // =============== GUARDAR =================
         private void button1_Click(object sender, EventArgs e) // Guardar
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text) || string.IsNullOrWhiteSpace(comboBox1.Text))
-            {
-                MessageBox.Show("Complete al menos el Nombre del entorno y el Tipo.",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            // Validación de todos los campos obligatorios
+            if (!ValidarFormulario(true)) return;
 
             const string SQL = @"
 INSERT INTO dbo.EntornosFormativos
@@ -115,6 +209,7 @@ VALUES
             }
         }
 
+        // (Si lo usabas para cerrar con clic, lo dejo vacío para no romper)
         private void label5_Click(object sender, EventArgs e) { }
     }
 }

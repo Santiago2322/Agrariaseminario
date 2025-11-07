@@ -8,23 +8,12 @@ namespace Proyecto_Agraria_Pacifico
     {
         private System.ComponentModel.IContainer components = null;
 
-        // === NOMBRES QUE ESPERA EL CODE-BEHIND ===
         private DataGridView dataGridView1;
         private Button button1; // Modificar
         private Button button2; // Eliminar
-        private Button button3; // Guardar
-        private Label label1;   // Nombre
-        private Label label2;   // Tipo
-        private Label label3;   // Profesor
-        private Label label4;   // Año
-        private Label label5;   // División
-        private Label label6;   // Grupo
-        private TextBox textBox1; // Nombre
-        private TextBox textBox2; // Tipo
-        private TextBox textBox3; // Profesor
-        private TextBox textBox4; // Año
-        private TextBox textBox6; // División
-        private TextBox textBox5; // Grupo
+        private Button button3; // Cerrar
+        private Label label1, label2, label3, label4, label5, label6;
+        private TextBox textBox1, textBox2, textBox3, textBox4, textBox5, textBox6;
 
         protected override void Dispose(bool disposing)
         {
@@ -36,7 +25,7 @@ namespace Proyecto_Agraria_Pacifico
         {
             this.components = new System.ComponentModel.Container();
 
-            // Paleta y fuentes
+            // Paleta
             Color verdeOscuro = Color.FromArgb(5, 80, 45);
             Color verdeMedio = Color.FromArgb(17, 105, 59);
 
@@ -52,6 +41,8 @@ namespace Proyecto_Agraria_Pacifico
             this.ClientSize = new Size(1100, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Consulta / Modificar / Eliminar Entornos Formativos";
+            this.AutoScroll = true;                         // ← scroll habilitado
+            this.AutoScrollMinSize = new Size(0, 740);     // ← margen de scroll
             this.Load += new EventHandler(this.Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load);
 
             // ==== GRID ====
@@ -64,13 +55,12 @@ namespace Proyecto_Agraria_Pacifico
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.BackgroundColor = Color.White;
             this.dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
-            {
-                Font = fHdr
-            };
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { Font = fHdr };
+            this.dataGridView1.EnableHeadersVisualStyles = false;
+            this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ← columnas a ancho
             this.dataGridView1.CellClick += new DataGridViewCellEventHandler(this.dataGridView1_CellClick);
 
-            // ==== BOTONES (debajo del grid) ====
+            // ==== BOTONES ====
             this.button1 = new Button(); // Modificar
             this.button1.Text = "Modificar";
             this.button1.Font = fBtn;
@@ -80,6 +70,7 @@ namespace Proyecto_Agraria_Pacifico
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.Size = new Size(170, 44);
             this.button1.Location = new Point(280, 368);
+            this.button1.Enabled = false;                                  // ← empieza deshabilitado
             this.button1.Click += new EventHandler(this.button1_Click);
 
             this.button2 = new Button(); // Eliminar
@@ -91,20 +82,13 @@ namespace Proyecto_Agraria_Pacifico
             this.button2.FlatAppearance.BorderSize = 0;
             this.button2.Size = new Size(170, 44);
             this.button2.Location = new Point(470, 368);
+            this.button2.Enabled = false;                                  // ← empieza deshabilitado
             this.button2.Click += new EventHandler(this.button2_Click);
 
-            // ==== LAYOUT EDICIÓN (dos columnas) ====
-            // Izquierda: Nombre, Tipo, Profesor
-            // Derecha:  Año, División, Grupo
-            int leftLblX = 24;
-            int leftTxtX = 320;
-            int rightLblX = 560;
-            int rightTxtX = 820;
-            int y1 = 438; // fila 1
-            int y2 = 490; // fila 2
-            int y3 = 542; // fila 3
+            // ==== CAMPOS ====
+            int leftLblX = 24, leftTxtX = 320, rightLblX = 560, rightTxtX = 820;
+            int y1 = 438, y2 = 490, y3 = 542;
 
-            // Labels
             this.label1 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Nombre del Entorno:", Location = new Point(leftLblX, y1) };
             this.label2 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Tipo de Entorno:", Location = new Point(leftLblX, y2) };
             this.label3 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Profesor Responsable:", Location = new Point(leftLblX, y3) };
@@ -114,19 +98,17 @@ namespace Proyecto_Agraria_Pacifico
             this.label5 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "División:", Location = new Point(rightLblX, y2) };
             this.label6 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Grupo:", Location = new Point(rightLblX, y3) };
 
-            // TextBoxes (los nombres que usa tu lógica)
-            this.textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // Nombre
-            this.textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // Tipo
-            this.textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // Profesor
-
-            this.textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // Año
+            this.textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            this.textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            this.textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            this.textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
             this.textBox4.TextChanged += new EventHandler(this.textBox4_TextChanged);
-            this.textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // División
-            this.textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase }; // Grupo
+            this.textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            this.textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
 
-            // Botón Guardar
+            // ==== BOTÓN CERRAR ====
             this.button3 = new Button();
-            this.button3.Text = "Guardar";
+            this.button3.Text = "Cerrar";
             this.button3.Font = fBtn;
             this.button3.BackColor = verdeMedio;
             this.button3.ForeColor = Color.White;
@@ -136,26 +118,16 @@ namespace Proyecto_Agraria_Pacifico
             this.button3.Location = new Point(914, 620);
             this.button3.Click += new EventHandler(this.button3_Click);
 
-            // ==== ADD CONTROLS ====
+            // ==== AGREGAR CONTROLES ====
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.button2);
-
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox3);
-
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox5);
-
             this.Controls.Add(this.button3);
+            this.Controls.AddRange(new Control[]
+            {
+                label1, textBox1, label2, textBox2, label3, textBox3,
+                label4, textBox4, label5, textBox6, label6, textBox5
+            });
         }
     }
 }

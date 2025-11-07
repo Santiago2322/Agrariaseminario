@@ -154,6 +154,7 @@ namespace Proyecto_Agraria_Pacifico
                 return;
             }
 
+            // Captura rápida vía DrawToBitmap (diseño original)
             printBmp = new Bitmap(activeChild.ClientSize.Width, activeChild.ClientSize.Height);
             activeChild.DrawToBitmap(printBmp, new Rectangle(Point.Empty, activeChild.ClientSize));
 
@@ -168,6 +169,7 @@ namespace Proyecto_Agraria_Pacifico
         private void PrintDoc_PrintPage(object sender, PrintPageEventArgs e)
         {
             if (printBmp == null) { e.HasMorePages = false; return; }
+
             var area = e.MarginBounds;
             float scale = Math.Min((float)area.Width / printBmp.Width, (float)area.Height / printBmp.Height);
             int w = (int)(printBmp.Width * scale);
@@ -326,3 +328,4 @@ namespace Proyecto_Agraria_Pacifico
         }
     }
 }
+

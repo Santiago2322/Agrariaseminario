@@ -18,35 +18,30 @@ namespace Proyecto_Agraria_Pacifico
         {
             InitializeComponent();
 
+            // Eventos
             this.Load += Frm_Load;
-
-            // 🔘 Botones (ajustá nombres si difieren en el diseñador)
             button1.Click += button1_Buscar_Click;   // Buscar
             button2.Click += button2_Eliminar_Click; // Eliminar
-            button3.Click += button3_Guardar_Click;  // Guardar (insert/update)
+            button3.Click += button3_Guardar_Click;  // Guardar cambios
 
-            // 📋 DataGridView
-            dataGridViewUsuarios.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewUsuarios.MultiSelect = false;
-            dataGridViewUsuarios.ReadOnly = true;
-            dataGridViewUsuarios.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewUsuarios.CellClick += DataGridViewUsuarios_CellClick;
+            dataGridViewUsuarios.SelectionChanged += DataGridViewUsuarios_SelectionChanged;
 
             this.AutoScroll = true;
         }
 
+        // ===== LOAD =====
         private void Frm_Load(object sender, EventArgs e)
         {
-            // Combo de roles
-            cboRol.Items.Clear();
-            cboRol.Items.AddRange(ROLES_PERMITIDOS);
-            cboRol.DropDownStyle = ComboBoxStyle.DropDownList;
+            // Combos base (si tu diseñador no los precarga)
+            if (cboRol.Items.Count == 0)
+                cboRol.Items.AddRange(ROLES_PERMITIDOS);
 
-            // Estado y Área
-            cboEstado.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboArea.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (cboEstado.Items.Count == 0)
+                cboEstado.Items.AddRange(new object[] { "Activo", "Inactivo" });
 
-            // Pregunta de seguridad
+            if (cboArea.Items.Count == 0)
+                cboArea.Items.AddRange(new object[] { "Administración", "Animal", "Vegetal", "Vivero", "Huerta" });
+
             if (cboPreguntaSeg.Items.Count == 0)
             {
                 cboPreguntaSeg.Items.AddRange(new object[]
@@ -56,31 +51,73 @@ namespace Proyecto_Agraria_Pacifico
                     "¿Comida favorita?"
                 });
             }
-            cboPreguntaSeg.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            // Grid
+            dataGridViewUsuarios.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewUsuarios.MultiSelect = false;
+            dataGridViewUsuarios.ReadOnly = true;
+            dataGridViewUsuarios.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // Arranco bloqueado
+            SetEditingEnabled(false);
             CargarUsuarios();
         }
 
-        // ==== CARGA Y FILTRO ====
+        // ===== UTILIDAD: habilitar/inhabilitar edición =====
+        private void SetEditingEnabled(bool enabled)
+        {
+            // Campos
+            txtNombre.Enabled = enabled;
+            txtApellido.Enabled = enabled;
+            txtDni.Enabled = enabled;
+            txtEmail.Enabled = enabled;
+            txtTelefono.Enabled = enabled;
+            txtUsuario.Enabled = enabled;
+            txtDireccion.Enabled = enabled;
+            txtLocalidad.Enabled = enabled;
+            txtProvincia.Enabled = enabled;
+            txtObservaciones.Enabled = enabled;
+
+            cboRol.Enabled = enabled;
+            cboEstado.Enabled = enabled;
+            cboArea.Enabled = enabled;
+            cboPreguntaSeg.Enabled = enabled;
+            txtRespuestaSeg.Enabled = enabled;
+
+            // Botones Modificar/Eliminar
+            button3.Enabled = enabled; // Guardar cambios
+            button2.Enabled = enabled; // Eliminar
+        }
+
+        // ===== LISTADO =====
         private void CargarUsuarios(string filtro = "")
         {
-            using (var cn = new SqlConnection(CADENA_CONEXION))
-            using (var da = new SqlDataAdapter(GetSqlListado(filtro), cn))
+            try
             {
-                if (!string.IsNullOrWhiteSpace(filtro))
-                    da.SelectCommand.Parameters.AddWithValue("@f", $"%{filtro.Trim()}%");
+                using (var cn = new SqlConnection(CADENA_CONEXION))
+                using (var da = new SqlDataAdapter(GetSqlListado(), cn))
+                {
+                    string f = (filtro ?? "").Trim();
+                    da.SelectCommand.Parameters.AddWithValue("@f", f == "" ? "" : "%" + f + "%");
 
-                var dt = new DataTable();
-                da.Fill(dt);
-                dataGridViewUsuarios.DataSource = dt;
+                    var dt = new DataTable();
+                    da.Fill(dt);
+                    dataGridViewUsuarios.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error cargando usuarios:\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private string GetSqlListado(string filtro)
+        private string GetSqlListado()
         {
-            string baseSql = @"
+            // Alias de PK para el grid: IdUsuario AS Id
+            return @"
                 SELECT 
-                    IdUsuario,
+                    IdUsuario AS Id,
                     Nombre,
                     Apellido,
                     DNI,
@@ -96,46 +133,98 @@ namespace Proyecto_Agraria_Pacifico
                     Area,
                     PreguntaSeguridad,
                     RespuestaSeguridad
-                FROM dbo.Usuarios ";
-
-            if (string.IsNullOrWhiteSpace(filtro))
-                return baseSql + "ORDER BY Apellido, Nombre;";
-
-            return baseSql + @"
-                WHERE (Nombre LIKE @f OR Apellido LIKE @f OR UsuarioLogin LIKE @f OR DNI LIKE @f)
+                FROM dbo.Usuarios
+                WHERE (@f = '' 
+                       OR Nombre LIKE @f OR Apellido LIKE @f OR UsuarioLogin LIKE @f OR DNI LIKE @f)
                 ORDER BY Apellido, Nombre;";
         }
 
         private void button1_Buscar_Click(object sender, EventArgs e)
         {
             CargarUsuarios(txtBuscar.Text.Trim());
+            LimpiarCampos();
+            SetEditingEnabled(false);
         }
 
-        // ==== SELECCIÓN DE GRILLA ====
-        private void DataGridViewUsuarios_CellClick(object sender, DataGridViewCellEventArgs e)
+        // ===== SELECCIÓN =====
+        private void DataGridViewUsuarios_SelectionChanged(object sender, EventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            var row = dataGridViewUsuarios.Rows[e.RowIndex];
-            if (row?.DataBoundItem == null) return;
+            if (dataGridViewUsuarios.CurrentRow == null)
+            {
+                LimpiarCampos();
+                SetEditingEnabled(false);
+                return;
+            }
 
-            txtId.Text = row.Cells["IdUsuario"]?.Value?.ToString();
-            txtNombre.Text = row.Cells["Nombre"]?.Value?.ToString();
-            txtApellido.Text = row.Cells["Apellido"]?.Value?.ToString();
-            txtDni.Text = row.Cells["DNI"]?.Value?.ToString();
-            txtEmail.Text = row.Cells["Email"]?.Value?.ToString();
-            txtTelefono.Text = row.Cells["Telefono"]?.Value?.ToString();
-            txtUsuario.Text = row.Cells["UsuarioLogin"]?.Value?.ToString();
-            txtDireccion.Text = row.Cells["Direccion"]?.Value?.ToString();
-            txtLocalidad.Text = row.Cells["Localidad"]?.Value?.ToString();
-            txtProvincia.Text = row.Cells["Provincia"]?.Value?.ToString();
-            txtObservaciones.Text = row.Cells["Observaciones"]?.Value?.ToString();
+            var cell = dataGridViewUsuarios.CurrentRow.Cells["Id"]; // alias presente en el SELECT
+            if (cell?.Value == null || cell.Value == DBNull.Value)
+            {
+                LimpiarCampos();
+                SetEditingEnabled(false);
+                return;
+            }
 
-            SetComboSafe(cboRol, row.Cells["Rol"]?.Value?.ToString());
-            SetComboSafe(cboEstado, row.Cells["Estado"]?.Value?.ToString());
-            SetComboSafe(cboArea, row.Cells["Area"]?.Value?.ToString());
-            SetComboSafe(cboPreguntaSeg, row.Cells["PreguntaSeguridad"]?.Value?.ToString());
+            if (!int.TryParse(cell.Value.ToString(), out int id))
+            {
+                LimpiarCampos();
+                SetEditingEnabled(false);
+                return;
+            }
 
-            txtRespuestaSeg.Text = row.Cells["RespuestaSeguridad"]?.Value?.ToString();
+            CargarDetalleUsuario(id);
+        }
+
+        // ===== DETALLE =====
+        private void CargarDetalleUsuario(int id)
+        {
+            try
+            {
+                using (var cn = new SqlConnection(CADENA_CONEXION))
+                using (var cmd = new SqlCommand("SELECT * FROM dbo.Usuarios WHERE IdUsuario=@id;", cn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cn.Open();
+                    using (var rd = cmd.ExecuteReader())
+                    {
+                        if (!rd.Read())
+                        {
+                            LimpiarCampos();
+                            SetEditingEnabled(false);
+                            return;
+                        }
+
+                        // Mostramos la PK real y todo lo demás
+                        txtId.Text = rd["IdUsuario"].ToString();
+                        txtNombre.Text = rd["Nombre"]?.ToString();
+                        txtApellido.Text = rd["Apellido"]?.ToString();
+                        txtDni.Text = rd["DNI"]?.ToString();
+                        txtEmail.Text = rd["Email"]?.ToString();
+                        txtTelefono.Text = rd["Telefono"]?.ToString();
+                        txtUsuario.Text = rd["UsuarioLogin"]?.ToString();
+                        txtDireccion.Text = rd["Direccion"]?.ToString();
+                        txtLocalidad.Text = rd["Localidad"]?.ToString();
+                        txtProvincia.Text = rd["Provincia"]?.ToString();
+                        txtObservaciones.Text = rd["Observaciones"]?.ToString();
+
+                        SetComboSafe(cboRol, rd["Rol"]?.ToString());
+                        SetComboSafe(cboEstado, rd["Estado"]?.ToString());
+                        SetComboSafe(cboArea, rd["Area"]?.ToString());
+                        SetComboSafe(cboPreguntaSeg, rd["PreguntaSeguridad"]?.ToString());
+
+                        txtRespuestaSeg.Text = rd["RespuestaSeguridad"]?.ToString();
+                    }
+                }
+
+                // Al haber selección válida, habilito edición/botones
+                SetEditingEnabled(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar el detalle del usuario:\n" + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LimpiarCampos();
+                SetEditingEnabled(false);
+            }
         }
 
         private void SetComboSafe(ComboBox combo, string value)
@@ -152,62 +241,38 @@ namespace Proyecto_Agraria_Pacifico
             }
         }
 
-        // ==== GUARDAR / MODIFICAR ====
+        // ===== GUARDAR CAMBIOS (UPDATE) =====
         private void button3_Guardar_Click(object sender, EventArgs e)
-        {
-            var rol = cboRol.Text?.Trim();
-            if (!string.IsNullOrWhiteSpace(rol) && !ROLES_PERMITIDOS.Contains(rol))
-            {
-                MessageBox.Show("Rol no permitido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtId.Text))
-                InsertarUsuario();
-            else
-                ActualizarUsuario();
-        }
-
-        private void InsertarUsuario()
-        {
-            const string SQL = @"
-                INSERT INTO dbo.Usuarios
-                    (Nombre, Apellido, DNI, Email, Telefono, UsuarioLogin,
-                     Direccion, Localidad, Provincia, Observaciones,
-                     Rol, Estado, Area, PreguntaSeguridad, RespuestaSeguridad)
-                VALUES
-                    (@Nombre, @Apellido, @DNI, @Email, @Telefono, @UsuarioLogin,
-                     @Direccion, @Localidad, @Provincia, @Observaciones,
-                     @Rol, @Estado, @Area, @PreguntaSeguridad, @RespuestaSeguridad);";
-
-            try
-            {
-                using (var cn = new SqlConnection(CADENA_CONEXION))
-                using (var cmd = new SqlCommand(SQL, cn))
-                {
-                    CargarParametrosUsuario(cmd);
-                    cn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-
-                MessageBox.Show("✅ Usuario creado correctamente.", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CargarUsuarios();
-                LimpiarCampos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al insertar el usuario:\n" + ex.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void ActualizarUsuario()
         {
             if (!int.TryParse(txtId.Text, out var id))
             {
-                MessageBox.Show("Id inválido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar un usuario.", "Atención",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
+
+            // Validaciones básicas mínimas para Modificación
+            var rol = (cboRol.Text ?? "").Trim();
+            if (!string.IsNullOrWhiteSpace(rol) && !ROLES_PERMITIDOS.Contains(rol))
+            {
+                MessageBox.Show("Rol no permitido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboRol.Focus();
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                MessageBox.Show("Nombre es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNombre.Focus(); return;
+            }
+            if (string.IsNullOrWhiteSpace(txtApellido.Text))
+            {
+                MessageBox.Show("Apellido es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtApellido.Focus(); return;
+            }
+            if (string.IsNullOrWhiteSpace(txtUsuario.Text))
+            {
+                MessageBox.Show("Usuario es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtUsuario.Focus(); return;
             }
 
             const string SQL = @"
@@ -234,14 +299,30 @@ namespace Proyecto_Agraria_Pacifico
                 using (var cn = new SqlConnection(CADENA_CONEXION))
                 using (var cmd = new SqlCommand(SQL, cn))
                 {
-                    CargarParametrosUsuario(cmd);
-                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                    cn.Open();
+                    object V(string s) => string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : s.Trim();
 
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                    cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 100).Value = V(txtNombre.Text);
+                    cmd.Parameters.Add("@Apellido", SqlDbType.NVarChar, 100).Value = V(txtApellido.Text);
+                    cmd.Parameters.Add("@DNI", SqlDbType.NVarChar, 20).Value = V(txtDni.Text);
+                    cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value = V(txtEmail.Text);
+                    cmd.Parameters.Add("@Telefono", SqlDbType.NVarChar, 50).Value = V(txtTelefono.Text);
+                    cmd.Parameters.Add("@UsuarioLogin", SqlDbType.NVarChar, 100).Value = V(txtUsuario.Text);
+                    cmd.Parameters.Add("@Direccion", SqlDbType.NVarChar, 200).Value = V(txtDireccion.Text);
+                    cmd.Parameters.Add("@Localidad", SqlDbType.NVarChar, 100).Value = V(txtLocalidad.Text);
+                    cmd.Parameters.Add("@Provincia", SqlDbType.NVarChar, 100).Value = V(txtProvincia.Text);
+                    cmd.Parameters.Add("@Observaciones", SqlDbType.NVarChar, -1).Value = V(txtObservaciones.Text);
+                    cmd.Parameters.Add("@Rol", SqlDbType.NVarChar, 50).Value = V(cboRol.Text);
+                    cmd.Parameters.Add("@Estado", SqlDbType.NVarChar, 50).Value = V(cboEstado.Text);
+                    cmd.Parameters.Add("@Area", SqlDbType.NVarChar, 100).Value = V(cboArea.Text);
+                    cmd.Parameters.Add("@PreguntaSeguridad", SqlDbType.NVarChar, 200).Value = V(cboPreguntaSeg.Text);
+                    cmd.Parameters.Add("@RespuestaSeguridad", SqlDbType.NVarChar, 200).Value = V(txtRespuestaSeg.Text);
+
+                    cn.Open();
                     int n = cmd.ExecuteNonQuery();
                     if (n == 0)
                     {
-                        MessageBox.Show("No se encontró el usuario.", "Aviso",
+                        MessageBox.Show("No se encontró el usuario a actualizar.", "Aviso",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
@@ -249,7 +330,10 @@ namespace Proyecto_Agraria_Pacifico
 
                 MessageBox.Show("✅ Cambios guardados correctamente.", "Éxito",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 CargarUsuarios(txtBuscar.Text.Trim());
+                // Mantengo seleccionado el mismo Id si está todavía en el grid:
+                ReseleccionarIdEnGrid(id);
             }
             catch (Exception ex)
             {
@@ -258,28 +342,21 @@ namespace Proyecto_Agraria_Pacifico
             }
         }
 
-        private void CargarParametrosUsuario(SqlCommand cmd)
+        private void ReseleccionarIdEnGrid(int id)
         {
-            object V(string s) => string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : s.Trim();
-
-            cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 100).Value = V(txtNombre.Text);
-            cmd.Parameters.Add("@Apellido", SqlDbType.NVarChar, 100).Value = V(txtApellido.Text);
-            cmd.Parameters.Add("@DNI", SqlDbType.NVarChar, 20).Value = V(txtDni.Text);
-            cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value = V(txtEmail.Text);
-            cmd.Parameters.Add("@Telefono", SqlDbType.NVarChar, 50).Value = V(txtTelefono.Text);
-            cmd.Parameters.Add("@UsuarioLogin", SqlDbType.NVarChar, 100).Value = V(txtUsuario.Text);
-            cmd.Parameters.Add("@Direccion", SqlDbType.NVarChar, 200).Value = V(txtDireccion.Text);
-            cmd.Parameters.Add("@Localidad", SqlDbType.NVarChar, 100).Value = V(txtLocalidad.Text);
-            cmd.Parameters.Add("@Provincia", SqlDbType.NVarChar, 100).Value = V(txtProvincia.Text);
-            cmd.Parameters.Add("@Observaciones", SqlDbType.NVarChar, -1).Value = V(txtObservaciones.Text);
-            cmd.Parameters.Add("@Rol", SqlDbType.NVarChar, 50).Value = V(cboRol.Text);
-            cmd.Parameters.Add("@Estado", SqlDbType.NVarChar, 50).Value = V(cboEstado.Text);
-            cmd.Parameters.Add("@Area", SqlDbType.NVarChar, 100).Value = V(cboArea.Text);
-            cmd.Parameters.Add("@PreguntaSeguridad", SqlDbType.NVarChar, 200).Value = V(cboPreguntaSeg.Text);
-            cmd.Parameters.Add("@RespuestaSeguridad", SqlDbType.NVarChar, 200).Value = V(txtRespuestaSeg.Text);
+            foreach (DataGridViewRow row in dataGridViewUsuarios.Rows)
+            {
+                var cell = row.Cells["Id"];
+                if (cell?.Value != null && int.TryParse(cell.Value.ToString(), out int gid) && gid == id)
+                {
+                    row.Selected = true;
+                    dataGridViewUsuarios.CurrentCell = row.Cells["Id"];
+                    return;
+                }
+            }
         }
 
-        // ==== ELIMINAR ====
+        // ===== ELIMINAR =====
         private void button2_Eliminar_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(txtId.Text, out var id))
@@ -300,13 +377,21 @@ namespace Proyecto_Agraria_Pacifico
                 {
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
                     cn.Open();
-                    cmd.ExecuteNonQuery();
+                    int n = cmd.ExecuteNonQuery();
+                    if (n == 0)
+                    {
+                        MessageBox.Show("No se encontró el usuario.", "Aviso",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                 }
 
                 MessageBox.Show("🗑️ Usuario eliminado correctamente.", "Éxito",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 CargarUsuarios(txtBuscar.Text.Trim());
                 LimpiarCampos();
+                SetEditingEnabled(false);
             }
             catch (Exception ex)
             {
@@ -315,7 +400,7 @@ namespace Proyecto_Agraria_Pacifico
             }
         }
 
-        // ==== LIMPIAR ====
+        // ===== LIMPIAR CAMPOS =====
         private void LimpiarCampos()
         {
             txtId.Clear();

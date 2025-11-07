@@ -30,7 +30,7 @@ namespace Proyecto_Agraria_Pacifico
             this.SuspendLayout();
 
             // ===== FORM =====
-            this.ClientSize = new Size(880, 520);
+            this.ClientSize = new Size(920, 560);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.WhiteSmoke;
             this.Text = "Consulta de Ventas";
@@ -45,7 +45,7 @@ namespace Proyecto_Agraria_Pacifico
             // ===== GRID =====
             this.dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             this.dataGridView1.Location = new Point(25, 70);
-            this.dataGridView1.Size = new Size(820, 360);
+            this.dataGridView1.Size = new Size(860, 420);
             this.dataGridView1.Font = fuenteNormal;
             this.dataGridView1.BackgroundColor = Color.White;
             this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -62,11 +62,11 @@ namespace Proyecto_Agraria_Pacifico
             this.button1.Font = fuenteBtn;
             this.button1.FlatStyle = FlatStyle.Flat;
             this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.Location = new Point((this.ClientSize.Width - 150) / 2, 450);
+            this.button1.Location = new Point((this.ClientSize.Width - 150) / 2, 500);
             this.button1.Size = new Size(150, 40);
             this.button1.Text = "Cerrar";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += (s, e) => this.Close();
+            // El click se engancha en el code-behind
 
             // ===== ADD CONTROLS =====
             this.Controls.Add(this.labelTitulo);
