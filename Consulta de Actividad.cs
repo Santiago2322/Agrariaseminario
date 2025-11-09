@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -7,62 +8,70 @@ namespace Proyecto_Agraria_Pacifico
 {
     public partial class Consulta_de_Actividad : Form
     {
-        // 🔗 Misma conexión que el resto del proyecto
-        private const string CADENA =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+        private readonly string CADENA =
+             @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         private int idSeleccionado = -1;
 
         public Consulta_de_Actividad()
         {
             InitializeComponent();
+            this.AutoScroll = true;            // ✅ Scroll vertical
+            this.HorizontalScroll.Enabled = true; // ✅ Scroll horizontal
             Load += Consulta_de_Actividad_Load;
-
-            // Asegurate en el Designer:
-            //  buttonBuscar.Click   -> buttonBuscar_Click
-            //  buttonEliminar.Click -> buttonEliminar_Click
-            //  buttonModificar.Click-> buttonModificar_Click
-            //  buttonNuevo.Click    -> buttonNuevo_Click
-            //  buttonGuardar.Click  -> buttonGuardar_Click
-            //  buttonCerrar.Click   -> buttonCerrar_Click
-            //  dataGridView1.CellClick -> dataGridView1_CellClick
         }
 
         private void Consulta_de_Actividad_Load(object sender, EventArgs e)
         {
             try
             {
-                EnsureTableExists();
+                EnsureSchema();
+                CargarEntornos();
                 CargarActividades();
-                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar actividades: " + ex.Message,
+                MessageBox.Show("Error al iniciar: " + ex.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void EnsureTableExists()
+        private void EnsureSchema()
         {
-            const string SQL = @"
-IF OBJECT_ID('dbo.Actividades','U') IS NULL
-BEGIN
-    CREATE TABLE dbo.Actividades
-    (
-        IdActividad INT IDENTITY(1,1) PRIMARY KEY,
-        Nombre NVARCHAR(100) NOT NULL,
-        Descripcion NVARCHAR(300) NULL,
-        Responsable NVARCHAR(100) NULL,
-        Fecha DATETIME2 NOT NULL CONSTRAINT DF_Actividades_Fecha DEFAULT SYSUTCDATETIME()
-    );
-END";
             using (var cn = new SqlConnection(CADENA))
-            using (var cmd = new SqlCommand(SQL, cn))
+            using (var cmd = new SqlCommand(@"
+IF OBJECT_ID('dbo.Actividades','U') IS NULL
+    RAISERROR('Falta la tabla dbo.Actividades.',16,1);
+IF COL_LENGTH('dbo.Actividades','Id') IS NULL
+    RAISERROR('dbo.Actividades debe tener columna Id (FK).',16,1);
+IF OBJECT_ID('dbo.EntornosFormativos','U') IS NULL
+    RAISERROR('Falta la tabla dbo.EntornosFormativos.',16,1);", cn))
             {
                 cn.Open();
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        private void CargarEntornos()
+        {
+            using (var cn = new SqlConnection(CADENA))
+            using (var da = new SqlDataAdapter(@"
+SELECT 
+    CASE WHEN COL_LENGTH('dbo.EntornosFormativos','IdEntorno') IS NOT NULL THEN IdEntorno
+         ELSE Id
+    END AS IdEntorno,
+    Nombre
+FROM dbo.EntornosFormativos
+ORDER BY Nombre;", cn))
+            {
+                var dt = new DataTable();
+                da.Fill(dt);
+                comboEntorno.DisplayMember = "Nombre";
+                comboEntorno.ValueMember = "IdEntorno";
+                comboEntorno.DataSource = dt;
             }
         }
 
@@ -72,138 +81,84 @@ END";
             using (var da = new SqlDataAdapter())
             {
                 string sql = @"
-SELECT IdActividad, Nombre, Descripcion, Responsable, Fecha
-FROM dbo.Actividades";
+SELECT a.IdActividad,
+       e.Nombre AS Entorno,
+       a.Nombre,
+       a.Fecha,
+       a.Hora,
+       a.Descripcion,
+       a.Responsable
+FROM dbo.Actividades a
+INNER JOIN dbo.EntornosFormativos e
+  ON (a.Id = e.Id OR a.Id = e.IdEntorno)
+WHERE 1=1";
 
-                if (!string.IsNullOrWhiteSpace(filtro))
-                    sql += " WHERE Nombre LIKE @f OR Descripcion LIKE @f OR Responsable LIKE @f";
+                var cmd = new SqlCommand();
+                cmd.Connection = cn;
 
-                sql += " ORDER BY Fecha DESC, Nombre";
+                if (comboEntorno.SelectedValue != null)
+                {
+                    sql += " AND a.Id = @idEntorno";
+                    cmd.Parameters.AddWithValue("@idEntorno", Convert.ToInt32(comboEntorno.SelectedValue));
+                }
 
-                da.SelectCommand = new SqlCommand(sql, cn);
-                if (!string.IsNullOrWhiteSpace(filtro))
-                    da.SelectCommand.Parameters.AddWithValue("@f", "%" + filtro + "%");
+                if (!string.IsNullOrWhiteSpace(txtFiltro.Text))
+                {
+                    sql += " AND (a.Nombre LIKE @f OR a.Descripcion LIKE @f OR a.Responsable LIKE @f)";
+                    cmd.Parameters.AddWithValue("@f", "%" + txtFiltro.Text + "%");
+                }
 
+                sql += " ORDER BY a.Fecha DESC, a.Hora ASC;";
+                cmd.CommandText = sql;
+
+                da.SelectCommand = cmd;
                 var dt = new DataTable();
                 da.Fill(dt);
 
-                dataGridView1.DataSource = dt;
-                if (dataGridView1.Columns["IdActividad"] != null)
-                    dataGridView1.Columns["IdActividad"].Visible = false;
+                grid.DataSource = dt;
+                if (grid.Columns["IdActividad"] != null)
+                    grid.Columns["IdActividad"].Visible = false;
             }
         }
 
-        private void buttonBuscar_Click(object sender, EventArgs e)
+        // =======================================================
+        // BOTONES
+        // =======================================================
+
+        private void btnBuscar_Click(object sender, EventArgs e)
         {
-            CargarActividades(textBoxFiltro.Text.Trim());
+            CargarActividades(txtFiltro.Text.Trim());
         }
 
-        private void buttonEliminar_Click(object sender, EventArgs e)
-        {
-            if (idSeleccionado == -1)
-            {
-                MessageBox.Show("Selecciona una actividad para eliminar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (MessageBox.Show("¿Seguro que deseas eliminar esta actividad?", "Confirmar",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                return;
-
-            using (var cn = new SqlConnection(CADENA))
-            using (var cmd = new SqlCommand("DELETE FROM dbo.Actividades WHERE IdActividad = @id", cn))
-            {
-                cmd.Parameters.AddWithValue("@id", idSeleccionado);
-                cn.Open();
-                cmd.ExecuteNonQuery();
-            }
-
-            CargarActividades();
-            LimpiarCampos();
-        }
-
-        private void buttonModificar_Click(object sender, EventArgs e)
-        {
-            if (idSeleccionado == -1)
-            {
-                MessageBox.Show("Selecciona una actividad para modificar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!ValidarCampos()) return;
-
-            using (var cn = new SqlConnection(CADENA))
-            using (var cmd = new SqlCommand(@"
-UPDATE dbo.Actividades
-SET Nombre=@n, Descripcion=@d, Responsable=@r
-WHERE IdActividad=@id;", cn))
-            {
-                cmd.Parameters.AddWithValue("@n", textBoxNombre.Text.Trim());
-                cmd.Parameters.AddWithValue("@d", textBoxDescripcion.Text.Trim());
-                cmd.Parameters.AddWithValue("@r", textBoxResponsable.Text.Trim());
-                cmd.Parameters.AddWithValue("@id", idSeleccionado);
-
-                cn.Open();
-                cmd.ExecuteNonQuery();
-            }
-
-            CargarActividades();
-            LimpiarCampos();
-            MessageBox.Show("Actividad modificada correctamente.", "OK",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || dataGridView1.CurrentRow == null) return;
-
-            var fila = dataGridView1.Rows[e.RowIndex];
-
-            if (fila.Cells["IdActividad"]?.Value != null &&
-                int.TryParse(fila.Cells["IdActividad"].Value.ToString(), out var id))
-                idSeleccionado = id;
-            else
-                idSeleccionado = -1;
-
-            textBoxNombre.Text = fila.Cells["Nombre"]?.Value?.ToString();
-            textBoxDescripcion.Text = fila.Cells["Descripcion"]?.Value?.ToString();
-            textBoxResponsable.Text = fila.Cells["Responsable"]?.Value?.ToString();
-        }
-
-        private void buttonCerrar_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void LimpiarCampos()
-        {
-            idSeleccionado = -1;
-            textBoxNombre.Clear();
-            textBoxDescripcion.Clear();
-            textBoxResponsable.Clear();
-            textBoxNombre.Focus();
-        }
-
-        // ===== Alta rápido =====
-        private void buttonNuevo_Click(object sender, EventArgs e)
+        private void btnNuevo_Click(object sender, EventArgs e)
         {
             LimpiarCampos();
         }
 
-        private void buttonGuardar_Click(object sender, EventArgs e)
+        private void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos()) return;
+            if (comboEntorno.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccioná un entorno.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int idEntorno = Convert.ToInt32(comboEntorno.SelectedValue);
+
+            const string SQL = @"
+INSERT INTO dbo.Actividades (Id, Nombre, Fecha, Hora, Descripcion, Responsable)
+VALUES (@id, @n, @f, @h, @d, @r);";
 
             using (var cn = new SqlConnection(CADENA))
-            using (var cmd = new SqlCommand(@"
-INSERT INTO dbo.Actividades (Nombre, Descripcion, Responsable)
-VALUES (@n, @d, @r);", cn))
+            using (var cmd = new SqlCommand(SQL, cn))
             {
-                cmd.Parameters.AddWithValue("@n", textBoxNombre.Text.Trim());
-                cmd.Parameters.AddWithValue("@d", textBoxDescripcion.Text.Trim());
-                cmd.Parameters.AddWithValue("@r", textBoxResponsable.Text.Trim());
+                cmd.Parameters.AddWithValue("@id", idEntorno);
+                cmd.Parameters.AddWithValue("@n", txtNombre.Text.Trim());
+                cmd.Parameters.AddWithValue("@f", dtpFecha.Value.Date);
+                cmd.Parameters.AddWithValue("@h", string.IsNullOrWhiteSpace(txtHora.Text) ? (object)DBNull.Value : txtHora.Text.Trim());
+                cmd.Parameters.AddWithValue("@d", string.IsNullOrWhiteSpace(txtDescripcion.Text) ? (object)DBNull.Value : txtDescripcion.Text.Trim());
+                cmd.Parameters.AddWithValue("@r", string.IsNullOrWhiteSpace(txtResponsable.Text) ? (object)DBNull.Value : txtResponsable.Text.Trim());
 
                 cn.Open();
                 cmd.ExecuteNonQuery();
@@ -215,13 +170,99 @@ VALUES (@n, @d, @r);", cn))
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            if (idSeleccionado == -1)
+            {
+                MessageBox.Show("Seleccioná una fila para modificar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            const string SQL = @"
+UPDATE dbo.Actividades
+SET Nombre=@n, Fecha=@f, Hora=@h, Descripcion=@d, Responsable=@r
+WHERE IdActividad=@id;";
+
+            using (var cn = new SqlConnection(CADENA))
+            using (var cmd = new SqlCommand(SQL, cn))
+            {
+                cmd.Parameters.AddWithValue("@id", idSeleccionado);
+                cmd.Parameters.AddWithValue("@n", txtNombre.Text.Trim());
+                cmd.Parameters.AddWithValue("@f", dtpFecha.Value.Date);
+                cmd.Parameters.AddWithValue("@h", string.IsNullOrWhiteSpace(txtHora.Text) ? (object)DBNull.Value : txtHora.Text.Trim());
+                cmd.Parameters.AddWithValue("@d", string.IsNullOrWhiteSpace(txtDescripcion.Text) ? (object)DBNull.Value : txtDescripcion.Text.Trim());
+                cmd.Parameters.AddWithValue("@r", string.IsNullOrWhiteSpace(txtResponsable.Text) ? (object)DBNull.Value : txtResponsable.Text.Trim());
+
+                cn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            CargarActividades();
+            MessageBox.Show("Actividad modificada correctamente.", "OK",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (idSeleccionado == -1)
+            {
+                MessageBox.Show("Seleccioná una actividad para eliminar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("¿Seguro que querés eliminar esta actividad?", "Confirmar",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
+            using (var cn = new SqlConnection(CADENA))
+            using (var cmd = new SqlCommand("DELETE FROM dbo.Actividades WHERE IdActividad=@id", cn))
+            {
+                cmd.Parameters.AddWithValue("@id", idSeleccionado);
+                cn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            CargarActividades();
+            LimpiarCampos();
+        }
+
+        private void grid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || grid.CurrentRow == null) return;
+            var fila = grid.Rows[e.RowIndex];
+
+            idSeleccionado = int.TryParse(fila.Cells["IdActividad"]?.Value?.ToString(), out var id) ? id : -1;
+            txtNombre.Text = fila.Cells["Nombre"]?.Value?.ToString();
+            txtHora.Text = fila.Cells["Hora"]?.Value?.ToString();
+            txtDescripcion.Text = fila.Cells["Descripcion"]?.Value?.ToString();
+            txtResponsable.Text = fila.Cells["Responsable"]?.Value?.ToString();
+
+            if (fila.Cells["Fecha"]?.Value != null && DateTime.TryParse(fila.Cells["Fecha"].Value.ToString(), out var fecha))
+                dtpFecha.Value = fecha;
+        }
+
+        // =======================================================
+        // HELPERS
+        // =======================================================
+
+        private void LimpiarCampos()
+        {
+            idSeleccionado = -1;
+            txtNombre.Clear();
+            txtHora.Clear();
+            txtDescripcion.Clear();
+            txtResponsable.Clear();
+            dtpFecha.Value = DateTime.Now;
+        }
+
         private bool ValidarCampos()
         {
-            if (string.IsNullOrWhiteSpace(textBoxNombre.Text))
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
-                MessageBox.Show("El campo Nombre es obligatorio.", "Validación",
+                MessageBox.Show("El nombre es obligatorio.", "Validación",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                textBoxNombre.Focus();
+                txtNombre.Focus();
                 return false;
             }
             return true;

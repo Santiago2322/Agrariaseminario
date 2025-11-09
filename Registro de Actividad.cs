@@ -9,8 +9,7 @@ namespace Proyecto_Agraria_Pacifico
     {
         // ✅ MISMA CADENA QUE EN TODO EL PROYECTO
         private const string CONN =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
-
+            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
         public Registro_de_Actividad()
         {
             InitializeComponent();

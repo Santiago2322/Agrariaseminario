@@ -8,7 +8,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Consulta_de_Ventas : Form
     {
         private const string CADENA_CONEXION =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         public Consulta_de_Ventas()
         {

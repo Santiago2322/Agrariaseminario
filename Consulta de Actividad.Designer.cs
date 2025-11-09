@@ -1,191 +1,253 @@
-﻿namespace Proyecto_Agraria_Pacifico
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace Proyecto_Agraria_Pacifico
 {
     partial class Consulta_de_Actividad
     {
         private System.ComponentModel.IContainer components = null;
 
+        private Label lblTitulo;
+        private Label lblEntorno;
+        private ComboBox comboEntorno;
+
+        private Label lblFiltro;
+        private TextBox txtFiltro;
+        private Button btnBuscar;
+
+        private DataGridView grid;
+
+        private GroupBox grpEdicion;
+        private Label lblNombre;
+        private TextBox txtNombre;
+
+        private Label lblFecha;
+        private DateTimePicker dtpFecha;
+
+        private Label lblHora;
+        private TextBox txtHora;
+
+        private Label lblResponsable;
+        private TextBox txtResponsable;
+
+        private Label lblDescripcion;
+        private TextBox txtDescripcion;
+
+        private Button btnNuevo;
+        private Button btnGuardar;
+        private Button btnModificar;
+        private Button btnEliminar;
+        private Button btnCerrar;
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-                components.Dispose();
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
-        #region Código generado por el Diseñador de Windows Forms
-
         private void InitializeComponent()
         {
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.textBoxFiltro = new System.Windows.Forms.TextBox();
-            this.buttonBuscar = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxNombre = new System.Windows.Forms.TextBox();
-            this.textBoxDescripcion = new System.Windows.Forms.TextBox();
-            this.textBoxResponsable = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.buttonModificar = new System.Windows.Forms.Button();
-            this.buttonEliminar = new System.Windows.Forms.Button();
-            this.buttonCerrar = new System.Windows.Forms.Button();
+            this.components = new System.ComponentModel.Container();
 
-            // NUEVOS:
-            this.buttonNuevo = new System.Windows.Forms.Button();
-            this.buttonGuardar = new System.Windows.Forms.Button();
+            Color verdeOscuro = Color.FromArgb(5, 80, 45);
+            Color verdeMedio = Color.FromArgb(17, 105, 59);
 
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.Location = new System.Drawing.Point(20, 60);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(600, 200);
-            this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
-            // 
-            // textBoxFiltro
-            // 
-            this.textBoxFiltro.Location = new System.Drawing.Point(80, 20);
-            this.textBoxFiltro.Name = "textBoxFiltro";
-            this.textBoxFiltro.Size = new System.Drawing.Size(300, 20);
-            this.textBoxFiltro.TabIndex = 1;
-            // 
-            // buttonBuscar
-            // 
-            this.buttonBuscar.Location = new System.Drawing.Point(400, 18);
-            this.buttonBuscar.Name = "buttonBuscar";
-            this.buttonBuscar.Size = new System.Drawing.Size(80, 25);
-            this.buttonBuscar.TabIndex = 2;
-            this.buttonBuscar.Text = "Buscar";
-            this.buttonBuscar.UseVisualStyleBackColor = true;
-            this.buttonBuscar.Click += new System.EventHandler(this.buttonBuscar_Click);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(20, 20);
-            this.label1.Size = new System.Drawing.Size(60, 20);
-            this.label1.Text = "Buscar:";
-            // 
-            // textBoxNombre
-            // 
-            this.textBoxNombre.Location = new System.Drawing.Point(120, 280);
-            this.textBoxNombre.Size = new System.Drawing.Size(250, 20);
-            // 
-            // textBoxDescripcion
-            // 
-            this.textBoxDescripcion.Location = new System.Drawing.Point(120, 310);
-            this.textBoxDescripcion.Size = new System.Drawing.Size(250, 20);
-            // 
-            // textBoxResponsable
-            // 
-            this.textBoxResponsable.Location = new System.Drawing.Point(120, 340);
-            this.textBoxResponsable.Size = new System.Drawing.Size(250, 20);
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(20, 283);
-            this.label2.Size = new System.Drawing.Size(80, 20);
-            this.label2.Text = "Nombre:";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(20, 313);
-            this.label3.Size = new System.Drawing.Size(80, 20);
-            this.label3.Text = "Descripción:";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(20, 343);
-            this.label4.Size = new System.Drawing.Size(80, 20);
-            this.label4.Text = "Responsable:";
-            // 
-            // buttonModificar
-            // 
-            this.buttonModificar.Location = new System.Drawing.Point(400, 280);
-            this.buttonModificar.Size = new System.Drawing.Size(100, 30);
-            this.buttonModificar.Text = "Modificar";
-            this.buttonModificar.UseVisualStyleBackColor = true;
-            this.buttonModificar.Click += new System.EventHandler(this.buttonModificar_Click);
-            // 
-            // buttonEliminar
-            // 
-            this.buttonEliminar.Location = new System.Drawing.Point(400, 320);
-            this.buttonEliminar.Size = new System.Drawing.Size(100, 30);
-            this.buttonEliminar.Text = "Eliminar";
-            this.buttonEliminar.UseVisualStyleBackColor = true;
-            this.buttonEliminar.Click += new System.EventHandler(this.buttonEliminar_Click);
-            // 
-            // buttonCerrar
-            // 
-            this.buttonCerrar.Location = new System.Drawing.Point(400, 400);
-            this.buttonCerrar.Size = new System.Drawing.Size(100, 30);
-            this.buttonCerrar.Text = "Cerrar";
-            this.buttonCerrar.UseVisualStyleBackColor = true;
-            this.buttonCerrar.Click += new System.EventHandler(this.buttonCerrar_Click);
-            // 
-            // buttonNuevo (NUEVO)
-            // 
-            this.buttonNuevo.Location = new System.Drawing.Point(520, 280);
-            this.buttonNuevo.Size = new System.Drawing.Size(100, 30);
-            this.buttonNuevo.Text = "Nuevo";
-            this.buttonNuevo.UseVisualStyleBackColor = true;
-            this.buttonNuevo.Click += new System.EventHandler(this.buttonNuevo_Click);
-            // 
-            // buttonGuardar (NUEVO)
-            // 
-            this.buttonGuardar.Location = new System.Drawing.Point(520, 320);
-            this.buttonGuardar.Size = new System.Drawing.Size(100, 30);
-            this.buttonGuardar.Text = "Guardar";
-            this.buttonGuardar.UseVisualStyleBackColor = true;
-            this.buttonGuardar.Click += new System.EventHandler(this.buttonGuardar_Click);
-            // 
-            // Consulta_de_Actividad (Form)
-            // 
-            this.ClientSize = new System.Drawing.Size(650, 450);
-            this.Controls.Add(this.buttonGuardar);
-            this.Controls.Add(this.buttonNuevo);
-            this.Controls.Add(this.buttonCerrar);
-            this.Controls.Add(this.buttonEliminar);
-            this.Controls.Add(this.buttonModificar);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBoxResponsable);
-            this.Controls.Add(this.textBoxDescripcion);
-            this.Controls.Add(this.textBoxNombre);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.buttonBuscar);
-            this.Controls.Add(this.textBoxFiltro);
-            this.Controls.Add(this.dataGridView1);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+
+            // ===== FORM =====
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.Font = new Font("Segoe UI", 10F);
+            this.BackColor = Color.White;
             this.Text = "Consulta de Actividad";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.Name = "Consulta_de_Actividad";
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            // Scroll
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new Size(1100, 800);
+            this.ClientSize = new Size(1100, 720);
+
+            // ===== TÍTULO =====
+            this.lblTitulo = new Label();
+            this.lblTitulo.AutoSize = true;
+            this.lblTitulo.Text = "Consulta / ABM de Actividades";
+            this.lblTitulo.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            this.lblTitulo.ForeColor = verdeOscuro;
+            this.lblTitulo.Location = new Point(16, 16);
+
+            // ===== ENTORNO + FILTRO =====
+            this.lblEntorno = new Label();
+            this.lblEntorno.AutoSize = true;
+            this.lblEntorno.Text = "Entorno:";
+            this.lblEntorno.Location = new Point(16, 70);
+
+            this.comboEntorno = new ComboBox();
+            this.comboEntorno.DropDownStyle = ComboBoxStyle.DropDownList;
+            this.comboEntorno.Location = new Point(88, 66);
+            this.comboEntorno.Size = new Size(360, 25);
+
+            this.lblFiltro = new Label();
+            this.lblFiltro.AutoSize = true;
+            this.lblFiltro.Text = "Buscar:";
+            this.lblFiltro.Location = new Point(470, 70);
+
+            this.txtFiltro = new TextBox();
+            this.txtFiltro.Location = new Point(528, 66);
+            this.txtFiltro.Size = new Size(320, 25);
+
+            this.btnBuscar = new Button();
+            this.btnBuscar.Text = "Buscar";
+            this.btnBuscar.Size = new Size(100, 28);
+            this.btnBuscar.Location = new Point(860, 65);
+            this.btnBuscar.BackColor = verdeMedio;
+            this.btnBuscar.ForeColor = Color.White;
+            this.btnBuscar.FlatStyle = FlatStyle.Flat;
+            this.btnBuscar.FlatAppearance.BorderSize = 0;
+            this.btnBuscar.Click += new EventHandler(this.btnBuscar_Click);
+
+            // ===== GRID =====
+            this.grid = aNewGrid(new Point(16, 110), new Size(1040, 320));
+            this.grid.CellClick += new DataGridViewCellEventHandler(this.grid_CellClick);
+
+            // ===== GRUPO EDICIÓN =====
+            this.grpEdicion = new GroupBox();
+            this.grpEdicion.Text = "Edición / Alta rápida";
+            this.grpEdicion.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            this.grpEdicion.ForeColor = verdeOscuro;
+            this.grpEdicion.Location = new Point(16, 446);
+            this.grpEdicion.Size = new Size(1040, 210);
+
+            // Nombre
+            this.lblNombre = new Label();
+            this.lblNombre.AutoSize = true;
+            this.lblNombre.Text = "Nombre:";
+            this.lblNombre.Location = new Point(16, 32);
+
+            this.txtNombre = new TextBox();
+            this.txtNombre.Location = new Point(95, 28);
+            this.txtNombre.Size = new Size(360, 25);
+
+            // Fecha
+            this.lblFecha = new Label();
+            this.lblFecha.AutoSize = true;
+            this.lblFecha.Text = "Fecha:";
+            this.lblFecha.Location = new Point(480, 32);
+
+            this.dtpFecha = new DateTimePicker();
+            this.dtpFecha.Location = new Point(536, 28);
+            this.dtpFecha.Size = new Size(180, 25);
+            this.dtpFecha.Format = DateTimePickerFormat.Short;
+
+            // Hora
+            this.lblHora = new Label();
+            this.lblHora.AutoSize = true;
+            this.lblHora.Text = "Hora:";
+            this.lblHora.Location = new Point(740, 32);
+
+            this.txtHora = new TextBox();
+            this.txtHora.Location = new Point(782, 28);
+            this.txtHora.Size = new Size(100, 25);
+
+            // Responsable
+            this.lblResponsable = new Label();
+            this.lblResponsable.AutoSize = true;
+            this.lblResponsable.Text = "Responsable:";
+            this.lblResponsable.Location = new Point(16, 72);
+
+            this.txtResponsable = new TextBox();
+            this.txtResponsable.Location = new Point(115, 68);
+            this.txtResponsable.Size = new Size(340, 25);
+
+            // Descripción
+            this.lblDescripcion = new Label();
+            this.lblDescripcion.AutoSize = true;
+            this.lblDescripcion.Text = "Descripción:";
+            this.lblDescripcion.Location = new Point(16, 112);
+
+            this.txtDescripcion = new TextBox();
+            this.txtDescripcion.Location = new Point(115, 108);
+            this.txtDescripcion.Size = new Size(767, 56);
+            this.txtDescripcion.Multiline = true;
+            this.txtDescripcion.ScrollBars = ScrollBars.Vertical;
+
+            // ===== BOTONES CRUD =====
+            this.btnNuevo = NewBtn("Nuevo", new Point(16, 664));
+            this.btnGuardar = NewBtn("Guardar", new Point(136, 664));
+            this.btnModificar = NewBtn("Modificar", new Point(256, 664));
+            this.btnEliminar = NewBtn("Eliminar", new Point(376, 664));
+            this.btnCerrar = NewBtn("Cerrar", new Point(946, 664));
+            this.btnCerrar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+            // Eventos de botones (los que ya tenés en tu code-behind)
+            this.btnNuevo.Click += new EventHandler(this.btnNuevo_Click);
+            this.btnGuardar.Click += new EventHandler(this.btnGuardar_Click);
+            this.btnModificar.Click += new EventHandler(this.btnModificar_Click);
+            this.btnEliminar.Click += new EventHandler(this.btnEliminar_Click);
+            // Cerrar sin requerir método en tu .cs:
+            this.btnCerrar.Click += (s, e) => this.Close();
+
+            // ===== Add a GroupBox =====
+            this.grpEdicion.Controls.Add(this.lblNombre);
+            this.grpEdicion.Controls.Add(this.txtNombre);
+            this.grpEdicion.Controls.Add(this.lblFecha);
+            this.grpEdicion.Controls.Add(this.dtpFecha);
+            this.grpEdicion.Controls.Add(this.lblHora);
+            this.grpEdicion.Controls.Add(this.txtHora);
+            this.grpEdicion.Controls.Add(this.lblResponsable);
+            this.grpEdicion.Controls.Add(this.txtResponsable);
+            this.grpEdicion.Controls.Add(this.lblDescripcion);
+            this.grpEdicion.Controls.Add(this.txtDescripcion);
+
+            // ===== Add to Form =====
+            this.Controls.Add(this.lblTitulo);
+            this.Controls.Add(this.lblEntorno);
+            this.Controls.Add(this.comboEntorno);
+            this.Controls.Add(this.lblFiltro);
+            this.Controls.Add(this.txtFiltro);
+            this.Controls.Add(this.btnBuscar);
+            this.Controls.Add(this.grid);
+            this.Controls.Add(this.grpEdicion);
+            this.Controls.Add(this.btnNuevo);
+            this.Controls.Add(this.btnGuardar);
+            this.Controls.Add(this.btnModificar);
+            this.Controls.Add(this.btnEliminar);
+            this.Controls.Add(this.btnCerrar);
+
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            // ----- helpers locales del designer -----
+            DataGridView aNewGrid(Point p, Size s)
+            {
+                var g = new DataGridView();
+                g.Location = p;
+                g.Size = s;
+                g.BackgroundColor = Color.White;
+                g.AllowUserToAddRows = false;
+                g.AllowUserToDeleteRows = false;
+                g.MultiSelect = false;
+                g.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                g.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                g.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                g.EnableHeadersVisualStyles = false;
+                g.ColumnHeadersDefaultCellStyle.BackColor = Color.Gainsboro;
+                g.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+                return g;
+            }
+
+            Button NewBtn(string text, Point p)
+            {
+                var b = new Button();
+                b.Text = text;
+                b.Size = new Size(110, 32);
+                b.Location = p;
+                b.BackColor = verdeMedio;
+                b.ForeColor = Color.White;
+                b.FlatStyle = FlatStyle.Flat;
+                b.FlatAppearance.BorderSize = 0;
+                return b;
+            }
         }
-
-        #endregion
-
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.TextBox textBoxFiltro;
-        private System.Windows.Forms.Button buttonBuscar;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxNombre;
-        private System.Windows.Forms.TextBox textBoxDescripcion;
-        private System.Windows.Forms.TextBox textBoxResponsable;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button buttonModificar;
-        private System.Windows.Forms.Button buttonEliminar;
-        private System.Windows.Forms.Button buttonCerrar;
-
-        // NUEVOS:
-        private System.Windows.Forms.Button buttonNuevo;
-        private System.Windows.Forms.Button buttonGuardar;
     }
 }

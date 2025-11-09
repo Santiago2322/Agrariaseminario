@@ -8,7 +8,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Consulta_de_Entornos_Formativos__Modificar_Eliminar : Form
     {
         private const string CADENA =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         private string _colPkEntornos = null;
 

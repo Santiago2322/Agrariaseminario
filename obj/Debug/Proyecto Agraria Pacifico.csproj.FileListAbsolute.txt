@@ -61,3 +61,24 @@ C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto 
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.csproj.CoreCompileInputs.cache
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.exe
 C:\Users\Santiago23\Videos\Proyecto Agraria Pacifico - copia\obj\Debug\Proyecto Agraria Pacifico.pdb
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\bin\Debug\Proyecto Agraria Pacifico.exe.config
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\bin\Debug\Proyecto Agraria Pacifico.exe
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\bin\Debug\Proyecto Agraria Pacifico.pdb
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto Agraria Pacifico.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Alta_de_Entornos_Formativos.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Alta_de_usuarios.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Consulta_de_Actividad.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Consulta_de_Entornos_Formativos__Modificar_Eliminar.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Consulta_de_Usuarios__Modificacion__Baja.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Consulta_de_Ventas.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Form1.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.FormOlvide_mi_Contraseña.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Inventario.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Pantalla_Principal.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Properties.Resources.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Registro_de_Actividad.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto_Agraria_Pacifico.Registro_de_una_Venta.resources
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto Agraria Pacifico.csproj.GenerateResource.cache
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto Agraria Pacifico.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto Agraria Pacifico.exe
+C:\Users\User\Desktop\Proyecto Agraria Pacifico - copia3\obj\Debug\Proyecto Agraria Pacifico.pdb

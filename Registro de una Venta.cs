@@ -9,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Registro_de_una_Venta : Form
     {
         private const string CADENA =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+             @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         public Registro_de_una_Venta()
         {

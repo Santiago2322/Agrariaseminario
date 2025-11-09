@@ -9,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
     {
         // Conexión directa a la base "Agraria" en localhost\SQLEXPRESS
         private const string CADENA_CONEXION =
-            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         // Importante: NO se permite crear Admin desde este form
         private static readonly string[] ROLES_PERMITIDOS = { "Jefe de area", "Docente", "Invitado", "Usuario" };
