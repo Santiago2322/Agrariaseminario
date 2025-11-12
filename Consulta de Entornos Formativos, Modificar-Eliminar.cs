@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.cs  (CODE-BEHIND)
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -17,7 +18,6 @@ namespace Proyecto_Agraria_Pacifico
             InitializeComponent();
             this.AutoScroll = true;
 
-            // eventos
             this.Load += Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load;
             dataGridView1.CellClick += dataGridView1_CellClick;
             button1.Click += button1_Click; // Modificar
@@ -28,6 +28,10 @@ namespace Proyecto_Agraria_Pacifico
         private static object NV(string s)
         {
             return string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : (object)s.Trim();
+        }
+        private static string S(object o)
+        {
+            return (o == null || o == DBNull.Value) ? "" : o.ToString();
         }
 
         private void Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load(object sender, EventArgs e)
@@ -47,7 +51,6 @@ namespace Proyecto_Agraria_Pacifico
                 if (dataGridView1.Columns["Id"] != null)
                     dataGridView1.Columns["Id"].Visible = false;
 
-                // desactivar botones hasta selección
                 button1.Enabled = false;
                 button2.Enabled = false;
             }
@@ -103,11 +106,12 @@ END";
             using (var cn = new SqlConnection(CADENA))
             using (var da = new SqlDataAdapter())
             {
-                string sql = $@"
+                string sql = @"
 SELECT 
-    {(_colPkEntornos == "IdEntorno" ? "IdEntorno" : "Id")} AS Id,
+    {PK} AS Id,
     Nombre, Tipo, Profesor, Anio, Division, Grupo
 FROM dbo.EntornosFormativos";
+                sql = sql.Replace("{PK}", _colPkEntornos == "IdEntorno" ? "IdEntorno" : "Id");
 
                 if (!string.IsNullOrWhiteSpace(filtro))
                     sql += " WHERE Nombre LIKE @f OR Tipo LIKE @f OR Profesor LIKE @f OR Anio LIKE @f OR Division LIKE @f OR Grupo LIKE @f";
@@ -116,7 +120,7 @@ FROM dbo.EntornosFormativos";
 
                 da.SelectCommand = new SqlCommand(sql, cn);
                 if (!string.IsNullOrWhiteSpace(filtro))
-                    da.SelectCommand.Parameters.AddWithValue("@f", "%" + filtro.Trim() + "%");
+                    da.SelectCommand.Parameters.Add("@f", SqlDbType.NVarChar, 120).Value = "%" + filtro.Trim() + "%";
 
                 var dt = new DataTable();
                 da.Fill(dt);
@@ -129,14 +133,13 @@ FROM dbo.EntornosFormativos";
             if (e.RowIndex < 0 || dataGridView1.CurrentRow == null) return;
 
             var fila = dataGridView1.Rows[e.RowIndex];
-            textBox1.Text = fila.Cells["Nombre"]?.Value?.ToString() ?? "";
-            textBox2.Text = fila.Cells["Tipo"]?.Value?.ToString() ?? "";
-            textBox3.Text = fila.Cells["Profesor"]?.Value?.ToString() ?? "";
-            textBox4.Text = fila.Cells["Anio"]?.Value?.ToString() ?? "";
-            textBox6.Text = fila.Cells["Division"]?.Value?.ToString() ?? "";
-            textBox5.Text = fila.Cells["Grupo"]?.Value?.ToString() ?? "";
+            textBox1.Text = fila.Cells["Nombre"] != null ? S(fila.Cells["Nombre"].Value) : "";
+            textBox2.Text = fila.Cells["Tipo"] != null ? S(fila.Cells["Tipo"].Value) : "";
+            textBox3.Text = fila.Cells["Profesor"] != null ? S(fila.Cells["Profesor"].Value) : "";
+            textBox4.Text = fila.Cells["Anio"] != null ? S(fila.Cells["Anio"].Value) : "";
+            textBox6.Text = fila.Cells["Division"] != null ? S(fila.Cells["Division"].Value) : "";
+            textBox5.Text = fila.Cells["Grupo"] != null ? S(fila.Cells["Grupo"].Value) : "";
 
-            // habilitar botones
             button1.Enabled = true;
             button2.Enabled = true;
         }
@@ -145,7 +148,7 @@ FROM dbo.EntornosFormativos";
         {
             if (dataGridView1.CurrentRow == null) return null;
             var cell = dataGridView1.CurrentRow.Cells["Id"];
-            if (cell?.Value == null || cell.Value == DBNull.Value) return null;
+            if (cell == null || cell.Value == null || cell.Value == DBNull.Value) return null;
             try { return Convert.ToInt32(cell.Value); } catch { return null; }
         }
 
@@ -169,23 +172,24 @@ FROM dbo.EntornosFormativos";
             int id = idOpt.Value;
             string colId = _colPkEntornos ?? "Id";
 
-            string SQL = $@"
+            string SQL = @"
 UPDATE dbo.EntornosFormativos
 SET Nombre=@n, Tipo=@t, Profesor=@p, Anio=@a, Division=@d, Grupo=@g
-WHERE {colId}=@id;";
+WHERE {COL}=@id;";
+            SQL = SQL.Replace("{COL}", colId);
 
             try
             {
                 using (var cn = new SqlConnection(CADENA))
                 using (var cmd = new SqlCommand(SQL, cn))
                 {
-                    cmd.Parameters.AddWithValue("@n", textBox1.Text.Trim());
-                    cmd.Parameters.AddWithValue("@t", textBox2.Text.Trim());
+                    cmd.Parameters.Add("@n", SqlDbType.NVarChar, 120).Value = NV(textBox1.Text);
+                    cmd.Parameters.Add("@t", SqlDbType.NVarChar, 80).Value = NV(textBox2.Text);
                     cmd.Parameters.Add("@p", SqlDbType.NVarChar, 120).Value = NV(textBox3.Text);
                     cmd.Parameters.Add("@a", SqlDbType.NVarChar, 20).Value = NV(textBox4.Text);
                     cmd.Parameters.Add("@d", SqlDbType.NVarChar, 20).Value = NV(textBox6.Text);
                     cmd.Parameters.Add("@g", SqlDbType.NVarChar, 40).Value = NV(textBox5.Text);
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
 
                     cn.Open();
                     int rows = cmd.ExecuteNonQuery();
@@ -224,14 +228,14 @@ WHERE {colId}=@id;";
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
             string colId = _colPkEntornos ?? "Id";
-            string SQL = $"DELETE FROM dbo.EntornosFormativos WHERE {colId}=@id;";
+            string SQL = "DELETE FROM dbo.EntornosFormativos WHERE {COL}=@id;".Replace("{COL}", colId);
 
             try
             {
                 using (var cn = new SqlConnection(CADENA))
                 using (var cmd = new SqlCommand(SQL, cn))
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     cn.Open();
                     int rows = cmd.ExecuteNonQuery();
                     if (rows == 0)
@@ -246,7 +250,6 @@ WHERE {colId}=@id;";
                 MessageBox.Show("Registro eliminado correctamente.", "Confirmación",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // limpiar campos y desactivar botones
                 textBox1.Clear(); textBox2.Clear(); textBox3.Clear();
                 textBox4.Clear(); textBox5.Clear(); textBox6.Clear();
                 button1.Enabled = false;
@@ -282,8 +285,5 @@ WHERE {colId}=@id;";
             }
             return true;
         }
-
-        private void label3_Click(object sender, EventArgs e) => this.Close();
-        private void textBox4_TextChanged(object sender, EventArgs e) { }
     }
 }

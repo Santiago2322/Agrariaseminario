@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.Designer.cs  (DESIGNER)
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -25,7 +26,6 @@ namespace Proyecto_Agraria_Pacifico
         {
             this.components = new System.ComponentModel.Container();
 
-            // Paleta
             Color verdeOscuro = Color.FromArgb(5, 80, 45);
             Color verdeMedio = Color.FromArgb(17, 105, 59);
 
@@ -34,91 +34,83 @@ namespace Proyecto_Agraria_Pacifico
             Font fBtn = new Font("Segoe UI", 12F, FontStyle.Bold);
             Font fHdr = new Font("Segoe UI", 12F, FontStyle.Bold);
 
-            // ==== FORM ====
             this.AutoScaleMode = AutoScaleMode.Font;
             this.Font = fBase;
             this.BackColor = Color.White;
-            this.ClientSize = new Size(1100, 700);
+            this.ClientSize = new Size(1100, 720);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Consulta / Modificar / Eliminar Entornos Formativos";
-            this.AutoScroll = true;                         // ← scroll habilitado
-            this.AutoScrollMinSize = new Size(0, 740);     // ← margen de scroll
-            this.Load += new EventHandler(this.Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load);
+            this.AutoScroll = true;
+            this.AutoScrollMinSize = new Size(0, 760);
 
-            // ==== GRID ====
-            this.dataGridView1 = new DataGridView();
-            this.dataGridView1.Location = new Point(16, 16);
-            this.dataGridView1.Size = new Size(1068, 340);
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.BackgroundColor = Color.White;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { Font = fHdr };
-            this.dataGridView1.EnableHeadersVisualStyles = false;
-            this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ← columnas a ancho
-            this.dataGridView1.CellClick += new DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            // GRID
+            dataGridView1 = new DataGridView();
+            dataGridView1.Location = new Point(16, 16);
+            dataGridView1.Size = new Size(1068, 340);
+            dataGridView1.ReadOnly = true;
+            dataGridView1.MultiSelect = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { Font = fHdr };
+            dataGridView1.EnableHeadersVisualStyles = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // ==== BOTONES ====
-            this.button1 = new Button(); // Modificar
-            this.button1.Text = "Modificar";
-            this.button1.Font = fBtn;
-            this.button1.BackColor = verdeMedio;
-            this.button1.ForeColor = Color.White;
-            this.button1.FlatStyle = FlatStyle.Flat;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.Size = new Size(170, 44);
-            this.button1.Location = new Point(280, 368);
-            this.button1.Enabled = false;                                  // ← empieza deshabilitado
-            this.button1.Click += new EventHandler(this.button1_Click);
+            // BOTONES
+            button1 = new Button(); // Modificar
+            button1.Text = "Modificar";
+            button1.Font = fBtn;
+            button1.BackColor = verdeMedio;
+            button1.ForeColor = Color.White;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.Size = new Size(170, 44);
+            button1.Location = new Point(280, 368);
+            button1.Enabled = false;
 
-            this.button2 = new Button(); // Eliminar
-            this.button2.Text = "Eliminar";
-            this.button2.Font = fBtn;
-            this.button2.BackColor = verdeMedio;
-            this.button2.ForeColor = Color.White;
-            this.button2.FlatStyle = FlatStyle.Flat;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.Size = new Size(170, 44);
-            this.button2.Location = new Point(470, 368);
-            this.button2.Enabled = false;                                  // ← empieza deshabilitado
-            this.button2.Click += new EventHandler(this.button2_Click);
+            button2 = new Button(); // Eliminar
+            button2.Text = "Eliminar";
+            button2.Font = fBtn;
+            button2.BackColor = verdeMedio;
+            button2.ForeColor = Color.White;
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.Size = new Size(170, 44);
+            button2.Location = new Point(470, 368);
+            button2.Enabled = false;
 
-            // ==== CAMPOS ====
+            // CAMPOS
             int leftLblX = 24, leftTxtX = 320, rightLblX = 560, rightTxtX = 820;
             int y1 = 438, y2 = 490, y3 = 542;
 
-            this.label1 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Nombre del Entorno:", Location = new Point(leftLblX, y1) };
-            this.label2 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Tipo de Entorno:", Location = new Point(leftLblX, y2) };
-            this.label3 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Profesor Responsable:", Location = new Point(leftLblX, y3) };
-            this.label3.Click += new EventHandler(this.label3_Click);
+            label1 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Nombre del Entorno:", Location = new Point(leftLblX, y1) };
+            label2 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Tipo de Entorno:", Location = new Point(leftLblX, y2) };
+            label3 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Profesor Responsable:", Location = new Point(leftLblX, y3) };
 
-            this.label4 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Año:", Location = new Point(rightLblX, y1) };
-            this.label5 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "División:", Location = new Point(rightLblX, y2) };
-            this.label6 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Grupo:", Location = new Point(rightLblX, y3) };
+            label4 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Año:", Location = new Point(rightLblX, y1) };
+            label5 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "División:", Location = new Point(rightLblX, y2) };
+            label6 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Grupo:", Location = new Point(rightLblX, y3) };
 
-            this.textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            this.textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            this.textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            this.textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            this.textBox4.TextChanged += new EventHandler(this.textBox4_TextChanged);
-            this.textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            this.textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
 
-            // ==== BOTÓN CERRAR ====
-            this.button3 = new Button();
-            this.button3.Text = "Cerrar";
-            this.button3.Font = fBtn;
-            this.button3.BackColor = verdeMedio;
-            this.button3.ForeColor = Color.White;
-            this.button3.FlatStyle = FlatStyle.Flat;
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.Size = new Size(170, 44);
-            this.button3.Location = new Point(914, 620);
-            this.button3.Click += new EventHandler(this.button3_Click);
+            // CERRAR
+            button3 = new Button();
+            button3.Text = "Cerrar";
+            button3.Font = fBtn;
+            button3.BackColor = verdeMedio;
+            button3.ForeColor = Color.White;
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.FlatAppearance.BorderSize = 0;
+            button3.Size = new Size(170, 44);
+            button3.Location = new Point(914, 660);
 
-            // ==== AGREGAR CONTROLES ====
+            // Add controls
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.button2);
