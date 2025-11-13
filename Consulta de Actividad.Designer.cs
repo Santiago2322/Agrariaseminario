@@ -34,7 +34,7 @@ namespace Proyecto_Agraria_Pacifico
         private Label lblDescripcion;
         private TextBox txtDescripcion;
 
-        private Button btnNuevo;
+        // 🔴 eliminado btnNuevo
         private Button btnGuardar;
         private Button btnModificar;
         private Button btnEliminar;
@@ -171,23 +171,20 @@ namespace Proyecto_Agraria_Pacifico
             this.txtDescripcion.Multiline = true;
             this.txtDescripcion.ScrollBars = ScrollBars.Vertical;
 
-            // ===== BOTONES CRUD =====
-            this.btnNuevo = NewBtn("Nuevo", new Point(16, 664));
-            this.btnGuardar = NewBtn("Guardar", new Point(136, 664));
-            this.btnModificar = NewBtn("Modificar", new Point(256, 664));
-            this.btnEliminar = NewBtn("Eliminar", new Point(376, 664));
+            // ===== BOTONES (sin Nuevo) =====
+            this.btnGuardar = NewBtn("Guardar", new Point(16, 664));
+            this.btnModificar = NewBtn("Modificar", new Point(136, 664));
+            this.btnEliminar = NewBtn("Eliminar", new Point(256, 664));
             this.btnCerrar = NewBtn("Cerrar", new Point(946, 664));
             this.btnCerrar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
-            // Eventos de botones (los que ya tenés en tu code-behind)
-            this.btnNuevo.Click += new EventHandler(this.btnNuevo_Click);
+            // Eventos de botones (ya definidos en el .cs)
             this.btnGuardar.Click += new EventHandler(this.btnGuardar_Click);
             this.btnModificar.Click += new EventHandler(this.btnModificar_Click);
             this.btnEliminar.Click += new EventHandler(this.btnEliminar_Click);
-            // Cerrar sin requerir método en tu .cs:
             this.btnCerrar.Click += (s, e) => this.Close();
 
-            // ===== Add a GroupBox =====
+            // ===== GRUPO: agregar controles =====
             this.grpEdicion.Controls.Add(this.lblNombre);
             this.grpEdicion.Controls.Add(this.txtNombre);
             this.grpEdicion.Controls.Add(this.lblFecha);
@@ -199,7 +196,7 @@ namespace Proyecto_Agraria_Pacifico
             this.grpEdicion.Controls.Add(this.lblDescripcion);
             this.grpEdicion.Controls.Add(this.txtDescripcion);
 
-            // ===== Add to Form =====
+            // ===== FORM: agregar controles =====
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblEntorno);
             this.Controls.Add(this.comboEntorno);
@@ -208,7 +205,6 @@ namespace Proyecto_Agraria_Pacifico
             this.Controls.Add(this.btnBuscar);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.grpEdicion);
-            this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnModificar);
             this.Controls.Add(this.btnEliminar);
@@ -233,6 +229,10 @@ namespace Proyecto_Agraria_Pacifico
                 g.EnableHeadersVisualStyles = false;
                 g.ColumnHeadersDefaultCellStyle.BackColor = Color.Gainsboro;
                 g.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+
+                // ✅ SOLO LECTURA DESDE DISEÑO
+                g.ReadOnly = true;
+
                 return g;
             }
 

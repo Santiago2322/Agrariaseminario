@@ -3,6 +3,8 @@
    + índices útiles + semilla Inventario (30 ítems)
    Seguro para correr varias veces
    ========================================================= */
+   use master
+   drop database Agraria
 SET NOCOUNT ON;
 
 IF DB_ID(N'Agraria') IS NULL
@@ -229,3 +231,4 @@ SELECT 'Actividades'        AS Tabla, COUNT(*) AS Filas FROM dbo.Actividades;
 SELECT 'Inventario'         AS Tabla, COUNT(*) AS Filas FROM dbo.Inventario;
 
 PRINT 'OK: Patch aplicado.';
+

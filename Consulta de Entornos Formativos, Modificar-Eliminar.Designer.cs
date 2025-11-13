@@ -1,5 +1,4 @@
-﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.Designer.cs  (DESIGNER)
-using System;
+﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.Designer.cs
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -10,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
         private System.ComponentModel.IContainer components = null;
 
         private DataGridView dataGridView1;
-        private Button button1; // Modificar
+        private Button button1; // Confirmar (renombrado)
         private Button button2; // Eliminar
         private Button button3; // Cerrar
         private Label label1, label2, label3, label4, label5, label6;
@@ -39,7 +38,7 @@ namespace Proyecto_Agraria_Pacifico
             this.BackColor = Color.White;
             this.ClientSize = new Size(1100, 720);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.Text = "Consulta / Modificar / Eliminar Entornos Formativos";
+            this.Text = "Consulta / Confirmar / Eliminar Entornos Formativos";
             this.AutoScroll = true;
             this.AutoScrollMinSize = new Size(0, 760);
 
@@ -47,19 +46,22 @@ namespace Proyecto_Agraria_Pacifico
             dataGridView1 = new DataGridView();
             dataGridView1.Location = new Point(16, 16);
             dataGridView1.Size = new Size(1068, 340);
-            dataGridView1.ReadOnly = true;
+            dataGridView1.ReadOnly = true; // 🔒
             dataGridView1.MultiSelect = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToAddRows = false;      // 🔒
+            dataGridView1.AllowUserToDeleteRows = false;   // 🔒
+            dataGridView1.AllowUserToOrderColumns = false; // 🔒
+            dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically; // 🔒
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { Font = fHdr };
             dataGridView1.EnableHeadersVisualStyles = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            // BOTONES
-            button1 = new Button(); // Modificar
-            button1.Text = "Modificar";
+            // BOTÓN CONFIRMAR (antes “Modificar”)
+            button1 = new Button();
+            button1.Text = "Confirmar";
             button1.Font = fBtn;
             button1.BackColor = verdeMedio;
             button1.ForeColor = Color.White;
@@ -69,7 +71,8 @@ namespace Proyecto_Agraria_Pacifico
             button1.Location = new Point(280, 368);
             button1.Enabled = false;
 
-            button2 = new Button(); // Eliminar
+            // BOTÓN ELIMINAR
+            button2 = new Button();
             button2.Text = "Eliminar";
             button2.Font = fBtn;
             button2.BackColor = verdeMedio;
@@ -92,12 +95,12 @@ namespace Proyecto_Agraria_Pacifico
             label5 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "División:", Location = new Point(rightLblX, y2) };
             label6 = new Label { AutoSize = true, Font = fLbl, ForeColor = verdeOscuro, Text = "Grupo:", Location = new Point(rightLblX, y3) };
 
-            textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
-            textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase };
+            textBox1 = new TextBox { Location = new Point(leftTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
+            textBox2 = new TextBox { Location = new Point(leftTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
+            textBox3 = new TextBox { Location = new Point(leftTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
+            textBox4 = new TextBox { Location = new Point(rightTxtX, y1 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
+            textBox6 = new TextBox { Location = new Point(rightTxtX, y2 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
+            textBox5 = new TextBox { Location = new Point(rightTxtX, y3 + 2), Size = new Size(220, 30), BorderStyle = BorderStyle.FixedSingle, Font = fBase, ReadOnly = true, TabStop = false };
 
             // CERRAR
             button3 = new Button();

@@ -8,7 +8,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Consulta_de_Ventas : Form
     {
         private const string CADENA_CONEXION =
-            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         public Consulta_de_Ventas()
         {
@@ -22,9 +22,8 @@ namespace Proyecto_Agraria_Pacifico
         {
             try
             {
-                NormalizeVentasSchema();  // <- quita columna calculada Total si existe
-                EnsureTablaVentas();      // asegura tabla
-                CargarVentas();           // carga grilla
+                EnsureTablaVentas();
+                CargarVentas();
             }
             catch (Exception ex)
             {
@@ -33,35 +32,6 @@ namespace Proyecto_Agraria_Pacifico
             }
         }
 
-        /// <summary>
-        /// Quita la columna calculada 'Total' si existe (causa el error al intentar insert/update).
-        /// No la volvemos a crear; calculamos el total en el SELECT.
-        /// </summary>
-        private void NormalizeVentasSchema()
-        {
-            using (var cn = new SqlConnection(CADENA_CONEXION))
-            using (var cmd = cn.CreateCommand())
-            {
-                cmd.CommandText = @"
--- ¿Existe la columna CALCULADA 'Total'?
-IF EXISTS (
-    SELECT 1
-    FROM sys.computed_columns cc
-    JOIN sys.objects o ON cc.object_id = o.object_id
-    WHERE o.type = 'U' AND o.name = 'Ventas' AND cc.name = 'Total'
-)
-BEGIN
-    ALTER TABLE dbo.Ventas DROP COLUMN Total;
-END;
-";
-                cn.Open();
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Asegura la tabla 'Ventas' sin columna calculada 'Total'.
-        /// </summary>
         private void EnsureTablaVentas()
         {
             using (var cn = new SqlConnection(CADENA_CONEXION))
@@ -81,18 +51,7 @@ BEGIN
         PrecioUnitario DECIMAL(10,2)   NOT NULL,
         Observaciones  NVARCHAR(300)   NULL
     );
-END;
-
--- Columnas mínimas si venías de un esquema viejo
-IF COL_LENGTH('dbo.Ventas','Hora') IS NULL
-    ALTER TABLE dbo.Ventas ADD Hora NVARCHAR(20) NULL;
-
-IF COL_LENGTH('dbo.Ventas','Cliente') IS NULL
-    ALTER TABLE dbo.Ventas ADD Cliente NVARCHAR(150) NULL;
-
-IF COL_LENGTH('dbo.Ventas','Observaciones') IS NULL
-    ALTER TABLE dbo.Ventas ADD Observaciones NVARCHAR(300) NULL;
-";
+END;";
                 cn.Open();
                 cmd.ExecuteNonQuery();
             }

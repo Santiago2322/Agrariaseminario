@@ -1,4 +1,4 @@
-﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.cs  (CODE-BEHIND)
+﻿// Consulta_de_Entornos_Formativos__Modificar_Eliminar.cs
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Consulta_de_Entornos_Formativos__Modificar_Eliminar : Form
     {
         private const string CADENA =
-            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         private string _colPkEntornos = null;
 
@@ -20,18 +20,37 @@ namespace Proyecto_Agraria_Pacifico
 
             this.Load += Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load;
             dataGridView1.CellClick += dataGridView1_CellClick;
-            button1.Click += button1_Click; // Modificar
+            dataGridView1.CellBeginEdit += dataGridView1_CellBeginEdit; // 🔒 bloquea edición directa
+            dataGridView1.DataError += dataGridView1_DataError;         // 🎯 evita crash por formato
+
+            button1.Click += button1_Click; // Confirmar (antes Modificar)
             button2.Click += button2_Click; // Eliminar
             button3.Click += button3_Click; // Cerrar
         }
 
         private static object NV(string s)
-        {
-            return string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : (object)s.Trim();
-        }
+            => string.IsNullOrWhiteSpace(s) ? (object)DBNull.Value : (object)s.Trim();
+
         private static string S(object o)
+            => (o == null || o == DBNull.Value) ? "" : o.ToString();
+
+        // 🔒 Habilita/Deshabilita edición de inputs
+        private void LockInputs(bool locked)
         {
-            return (o == null || o == DBNull.Value) ? "" : o.ToString();
+            textBox1.ReadOnly = locked;
+            textBox2.ReadOnly = locked;
+            textBox3.ReadOnly = locked;
+            textBox4.ReadOnly = locked;
+            textBox5.ReadOnly = locked;
+            textBox6.ReadOnly = locked;
+
+            // Opcional: también los deshabilito visualmente
+            textBox1.TabStop = !locked;
+            textBox2.TabStop = !locked;
+            textBox3.TabStop = !locked;
+            textBox4.TabStop = !locked;
+            textBox5.TabStop = !locked;
+            textBox6.TabStop = !locked;
         }
 
         private void Consulta_de_Entornos_Formativos__Modificar_Eliminar_Load(object sender, EventArgs e)
@@ -42,17 +61,23 @@ namespace Proyecto_Agraria_Pacifico
                 EnsureTabla();
                 CargarDatos();
 
+                // 🔒 Grilla bloqueada
+                dataGridView1.ReadOnly = true;
+                dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
                 dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 dataGridView1.MultiSelect = false;
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridView1.AllowUserToAddRows = false;
-                dataGridView1.ReadOnly = true;
+                dataGridView1.AllowUserToDeleteRows = false;
+                dataGridView1.AllowUserToOrderColumns = false;
 
                 if (dataGridView1.Columns["Id"] != null)
                     dataGridView1.Columns["Id"].Visible = false;
 
-                button1.Enabled = false;
-                button2.Enabled = false;
+                // 🚫 Sin selección: inputs bloqueados y botones off
+                LockInputs(true);
+                button1.Enabled = false; // Confirmar
+                button2.Enabled = false; // Eliminar
             }
             catch (Exception ex)
             {
@@ -140,8 +165,21 @@ FROM dbo.EntornosFormativos";
             textBox6.Text = fila.Cells["Division"] != null ? S(fila.Cells["Division"].Value) : "";
             textBox5.Text = fila.Cells["Grupo"] != null ? S(fila.Cells["Grupo"].Value) : "";
 
-            button1.Enabled = true;
-            button2.Enabled = true;
+            // ✅ Al seleccionar, habilito edición y botones
+            LockInputs(false);
+            button1.Enabled = true; // Confirmar
+            button2.Enabled = true; // Eliminar
+        }
+
+        // 🔒 Seguridad extra: impedir edición directa en la grilla
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
+
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.ThrowException = false;
         }
 
         private int? IdSeleccionado()
@@ -152,7 +190,7 @@ FROM dbo.EntornosFormativos";
             try { return Convert.ToInt32(cell.Value); } catch { return null; }
         }
 
-        private void button1_Click(object sender, EventArgs e) // Modificar
+        private void button1_Click(object sender, EventArgs e) // Confirmar
         {
             if (dataGridView1.CurrentRow == null)
             {
@@ -202,12 +240,12 @@ WHERE {COL}=@id;";
                 }
 
                 CargarDatos();
-                MessageBox.Show("Registro modificado correctamente.", "Confirmación",
+                MessageBox.Show("Registro confirmado correctamente.", "Confirmación",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al modificar: " + ex.Message, "Error",
+                MessageBox.Show("Error al confirmar: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -250,10 +288,12 @@ WHERE {COL}=@id;";
                 MessageBox.Show("Registro eliminado correctamente.", "Confirmación",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                // 🔄 limpiar y volver a bloquear inputs
                 textBox1.Clear(); textBox2.Clear(); textBox3.Clear();
                 textBox4.Clear(); textBox5.Clear(); textBox6.Clear();
                 button1.Enabled = false;
                 button2.Enabled = false;
+                LockInputs(true);
             }
             catch (Exception ex)
             {

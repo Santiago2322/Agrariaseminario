@@ -10,7 +10,7 @@ namespace Proyecto_Agraria_Pacifico
     {
         // 🔗 Conexión directa a la base "Agraria"
         private const string CADENA_CONEXION =
-            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         private static readonly string[] ROLES_PERMITIDOS = { "Jefe de area", "Docente", "Invitado" };
 

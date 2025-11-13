@@ -9,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Alta_de_Entornos_Formativos : Form
     {
         private const string CADENA =
-             @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+              @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         // ---- Límites de longitudes (suaves) ----
         private const int MAX_NOMBRE = 120;

@@ -9,15 +9,15 @@ namespace Proyecto_Agraria_Pacifico
     public partial class Consulta_de_Actividad : Form
     {
         private readonly string CADENA =
-             @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+             @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         private int idSeleccionado = -1;
 
         public Consulta_de_Actividad()
         {
             InitializeComponent();
-            this.AutoScroll = true;            // ✅ Scroll vertical
-            this.HorizontalScroll.Enabled = true; // ✅ Scroll horizontal
+            this.AutoScroll = true;                // ✅ Scroll vertical
+            this.HorizontalScroll.Enabled = true;  // ✅ Scroll horizontal
             Load += Consulta_de_Actividad_Load;
         }
 
@@ -31,6 +31,11 @@ namespace Proyecto_Agraria_Pacifico
 
                 grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                // ✅ Solo consulta, no se edita desde la grilla
+                grid.ReadOnly = true;
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
             }
             catch (Exception ex)
             {
@@ -118,6 +123,11 @@ WHERE 1=1";
                 grid.DataSource = dt;
                 if (grid.Columns["IdActividad"] != null)
                     grid.Columns["IdActividad"].Visible = false;
+
+                // Reafirmo solo lectura por las dudas
+                grid.ReadOnly = true;
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
             }
         }
 
@@ -130,6 +140,7 @@ WHERE 1=1";
             CargarActividades(txtFiltro.Text.Trim());
         }
 
+        // 👇 Aunque ya no haya botón "Nuevo", dejo el método por si lo usás en otro lado
         private void btnNuevo_Click(object sender, EventArgs e)
         {
             LimpiarCampos();

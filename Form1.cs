@@ -9,7 +9,7 @@ namespace Proyecto_Agraria_Pacifico
         private readonly ErrorProvider ep = new ErrorProvider { BlinkStyle = ErrorBlinkStyle.NeverBlink };
 
         private const string CONN =
-            @"Data Source=DESKTOP-92OCSA4;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=localhost\SQLEXPRESS;Initial Catalog=Agraria;Integrated Security=True;TrustServerCertificate=True";
 
         public string RolSeleccionado { get; private set; } = "invitado";
         public bool AuthSucceeded { get; private set; } = false;

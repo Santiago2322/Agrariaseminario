@@ -66,7 +66,6 @@ namespace Proyecto_Agraria_Pacifico
             this.button1.Size = new Size(150, 40);
             this.button1.Text = "Cerrar";
             this.button1.UseVisualStyleBackColor = true;
-            // El click se engancha en el code-behind
 
             // ===== ADD CONTROLS =====
             this.Controls.Add(this.labelTitulo);
